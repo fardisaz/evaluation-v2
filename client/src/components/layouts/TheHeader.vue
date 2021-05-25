@@ -10,21 +10,21 @@
       >
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <router-link class="nav-link navText" to="/login" v-if="!isLoggedIn"
+          <li class="nav-item" v-if="!isLoggedIn">
+            <router-link class="nav-link navText" to="/login"
               >Login</router-link
             >
           </li>
-          <li class="nav-item">
-            <router-link
-              class="nav-link navText"
-              to="/register"
-              v-if="!isLoggedIn"
+          <li class="nav-item" v-if="!isLoggedIn">
+            <router-link class="nav-link navText" to="/register"
               >Register</router-link
             >
           </li>
-          <li class="nav-item">
-            <a class="nav-link navText" to="/logout" v-if="isLoggedIn"
+          <li class="nav-item" v-if="isLoggedIn">
+            <a
+              class="nav-link navText aTag"
+              to="/logout"
+              @click.prevent="logoutUser"
               >Logout</a
             >
           </li>
@@ -35,10 +35,16 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 export default {
   computed: {
     ...mapGetters(["isLoggedIn"]),
+  },
+  methods: {
+    ...mapActions(["logout"]),
+    logoutUser() {
+      this.logout();
+    },
   },
 };
 </script>
@@ -55,6 +61,9 @@ export default {
 }
 .navText {
   color: #725e88;
+}
+.aTag {
+  cursor: pointer;
 }
 
 a:active,

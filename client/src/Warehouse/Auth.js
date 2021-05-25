@@ -1,15 +1,17 @@
 import axios from "axios";
-// import router from "router";
+import router from "../router";
 
 const state = {
   token: localStorage.getItem("token") || "",
   user: {},
   status: "",
+  ideas: [],
 };
 const getters = {
   isLoggedIn: (state) => !!state.token,
   authState: (state) => state.status,
   user: (state) => state.user,
+  getIdeas: (state) => state.ideas,
 };
 const actions = {
   //Login Action
@@ -27,6 +29,32 @@ const actions = {
     }
     return res;
   },
+  //Register Action
+  async register({ commit }, userData) {
+    commit("register_request");
+    let res = await axios.post(
+      "http://localhost:5000/api/users/register",
+      userData
+    );
+    if (res.data.success !== undefined) {
+      commit("register_success");
+    }
+    return res;
+  },
+  //Logout Action
+  async logout({ commit }) {
+    await localStorage.removeItem("token");
+    commit("logout");
+    delete axios.defaults.headers.common["Authorization"];
+    router.push("/login");
+    return;
+  },
+  async fetchIdeas({ commit }) {
+    let res = await axios.get("http://localhost:5000/api/users/profile");
+    const ideas = res.data.user.ideas;
+    commit("SET_IDEAS", ideas);
+    //return ideas;
+  },
 };
 const mutations = {
   auth_request(state) {
@@ -36,6 +64,21 @@ const mutations = {
     state.token = token;
     state.user = user;
     state.status = "success";
+  },
+  register_request(state) {
+    state.status = "loading";
+  },
+  register_success(state) {
+    state.status = "success";
+  },
+  logout(state) {
+    state.status = "";
+    state.token = "";
+    state.user = "";
+  },
+  //Ideas Mutation
+  SET_IDEAS(state, ideas) {
+    state.ideas = ideas;
   },
 };
 

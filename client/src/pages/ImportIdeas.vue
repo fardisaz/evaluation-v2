@@ -9,29 +9,32 @@
 
 <script>
 import FileReader from "../components/FileReader";
-import { mapState } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 import FilterLayout from "../components/layouts/FilterLayout.vue";
 export default {
   components: { FileReader, FilterLayout },
   methods: {
+    ...mapActions(["fetchIdeas"]),
     loadIdeas(input) {
       //loaded ideas by the user
       const loads = input.split("//");
-      let ideas = this.$store.state.ideas;
+      let ideas = this.getIdeas;
+      console.log(ideas);
+      //You should work on this next
       //write the loaded ideas into the description of idea json
       ideas.map((idea, index) => {
         idea.description = loads[index];
         this.$store.dispatch("changeIdeas", idea);
       });
       //console.log(ideas);
-      this.$router.push("/evaluation");
+      //this.$router.push("/evaluation");
     },
   },
   created() {
-    //fetching the idea from json server
-    this.$store.dispatch("fetchIdeas");
+    //fetching the idea from user ideas model
+    this.fetchIdeas();
   },
-  computed: mapState(["ideas"]),
+  computed: { ...mapGetters(["getIdeas"]) },
 };
 </script>
 

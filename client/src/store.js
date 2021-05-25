@@ -6,13 +6,13 @@ const store = createStore({
     Auth,
   },
   state: {
-    ideas: [],
+    // ideas: [],
     idea: {},
   },
   mutations: {
-    SET_IDEAS(state, ideas) {
-      state.ideas = ideas;
-    },
+    // SET_IDEAS(state, ideas) {
+    //   state.ideas = ideas;
+    // },
     UPDATE_IDEA(state, idea) {
       // update the position of the moved idea
       const index = state.ideas.findIndex((item) => {
@@ -22,13 +22,13 @@ const store = createStore({
     },
   },
   actions: {
-    fetchIdeas({ commit }) {
-      IdeaServices.getIdeas()
-        .then((response) => {
-          commit("SET_IDEAS", response.data);
-        })
-        .catch((error) => console.log(error));
-    },
+    // fetchIdeas({ commit }) {
+    //   IdeaServices.getIdeas()
+    //     .then((response) => {
+    //       commit("SET_IDEAS", response.data);
+    //     })
+    //     .catch((error) => console.log(error));
+    // },
     changeIdeas({ commit, dispatch }, idea) {
       // the updated idea will be PUT to the server
       IdeaServices.putIdea(idea);

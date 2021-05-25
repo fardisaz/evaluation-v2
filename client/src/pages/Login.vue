@@ -21,7 +21,7 @@
             <label for="password">Password</label>
             <input
               id="password"
-              type="text"
+              type="password"
               placeholder="Password"
               class="form-control"
               name="password"
