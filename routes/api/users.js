@@ -69,6 +69,7 @@ router.post("/login", (req, res) => {
         jwt.sign(payload, key, { expiresIn: 604800 }, (err, token) => {
           res.status(200).json({
             success: true,
+            user,
             token: `Bearer ${token}`,
             msg: "You are now logged in!",
           });
@@ -93,6 +94,25 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
     return res.json({ user: req.user });
+  }
+);
+
+/**
+ * @route POST api/users/import
+ * @desc Return the User's ideas
+ * @access Private
+ */
+router.patch(
+  "/import",
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const descs = req.body.descriptions;
+    const ideas = req.user.ideas;
+    ideas.forEach((idea, index) => {
+      idea.description = descs[index];
+    });
+    req.user.save();
+    return res.send(req.user);
   }
 );
 
