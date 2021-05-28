@@ -1,5 +1,6 @@
 <template>
   <div>
+    <filter-layout></filter-layout>
     <download
       :download-data="$store.state.ideas"
       file-type="json"
@@ -13,10 +14,11 @@
 </template>
 
 <script>
-import Download from '../components/Download';
-import DraggableItems from '../components/DraggableItems.vue';
+import Download from "../components/Download";
+import DraggableItems from "../components/DraggableItems.vue";
+import FilterLayout from "../components/layouts/FilterLayout.vue";
 export default {
-  components: { Download, DraggableItems }
+  components: { Download, DraggableItems, FilterLayout },
 };
 </script>
 

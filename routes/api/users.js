@@ -108,11 +108,58 @@ router.patch(
   (req, res) => {
     const descs = req.body.descriptions;
     const ideas = req.user.ideas;
-    ideas.forEach((idea, index) => {
-      idea.description = descs[index];
-    });
-    req.user.save();
-    return res.send(req.user);
+    try {
+      ideas.forEach((idea, index) => {
+        User.update(
+          { "ideas._id": idea._id },
+          {
+            $set: {
+              "ideas.$.description": req.body.descriptions[index],
+            },
+          },
+          (error, result) => {
+            if (error) {
+              res.status(500).send();
+            }
+            // res.send(result);
+            console.log(result);
+          }
+        );
+      });
+      res.send(ideas);
+    } catch (e) {
+      res.status(500).send();
+    }
+  }
+);
+/**
+ * @route POST api/users/ideas/:id
+ * @desc Return the updates User's ideas
+ * @access Private
+ */
+router.patch(
+  "/ideas/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      User.update(
+        { "ideas._id": req.params.id },
+        {
+          $set: {
+            "ideas.$.answers": req.body.answers,
+            "ideas.$.similarIdeas": req.body.similarIdeas,
+            "ideas.$.position": req.body.position,
+            "ideas.$.classification": req.body.classification,
+          },
+        },
+        function (err) {
+          console.log("This is the error for updating the value");
+        }
+      );
+      res.send(req.user);
+    } catch (e) {
+      res.status(500).send();
+    }
   }
 );
 

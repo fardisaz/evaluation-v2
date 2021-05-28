@@ -14,18 +14,26 @@ import FilterLayout from "../components/layouts/FilterLayout.vue";
 export default {
   components: { FileReader, FilterLayout },
   methods: {
-    ...mapActions(["fetchIdeas"]),
+    ...mapActions(["fetchIdeas", "importDescription"]),
     loadIdeas(input) {
       //loaded ideas by the user
       const loads = input.split("//");
-      let ideas = this.getIdeas;
-      console.log(ideas);
+      const descs = { descriptions: loads };
+      this.importDescription(descs)
+        .then(() => {
+          //console.log(res.data);
+          console.log(this.ideas.data);
+          this.$router.push("/evaluation");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
       //You should work on this next
       //write the loaded ideas into the description of idea json
-      ideas.map((idea, index) => {
-        idea.description = loads[index];
-        this.$store.dispatch("changeIdeas", idea);
-      });
+      // ideas.map((idea, index) => {
+      //   idea.description = loads[index];
+      //   this.$store.dispatch("changeIdeas", idea);
+      // });
       //console.log(ideas);
       //this.$router.push("/evaluation");
     },
@@ -34,7 +42,7 @@ export default {
     //fetching the idea from user ideas model
     this.fetchIdeas();
   },
-  computed: { ...mapGetters(["getIdeas"]) },
+  computed: { ...mapGetters(["ideas"]) },
 };
 </script>
 

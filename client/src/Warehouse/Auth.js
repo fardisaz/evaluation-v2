@@ -11,7 +11,7 @@ const getters = {
   isLoggedIn: (state) => !!state.token,
   authState: (state) => state.status,
   user: (state) => state.user,
-  getIdeas: (state) => state.ideas,
+  ideas: (state) => state.ideas,
 };
 const actions = {
   //Login Action
@@ -54,6 +54,13 @@ const actions = {
     const ideas = res.data.user.ideas;
     commit("SET_IDEAS", ideas);
     //return ideas;
+  },
+  async importDescription({ commit }, ideaArray) {
+    let res = await axios.patch(
+      "http://localhost:5000/api/users/import",
+      ideaArray
+    );
+    commit("SET_IDEAS", res);
   },
 };
 const mutations = {
