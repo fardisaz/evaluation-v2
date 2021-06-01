@@ -55,12 +55,26 @@ const actions = {
     commit("SET_IDEAS", ideas);
     //return ideas;
   },
+  //import descriptions
   async importDescription({ commit }, ideaArray) {
     let res = await axios.patch(
       "http://localhost:5000/api/users/import",
       ideaArray
     );
-    commit("SET_IDEAS", res);
+    commit("SET_IDEAS", res.data);
+  },
+  //update ideas
+  async updateIdea({ commit }, updatedIdea) {
+    let res = await axios.patch(
+      "http://localhost:5000/api/users/ideas/" + updatedIdea._id,
+      {
+        position: updatedIdea.position,
+        classification: updatedIdea.classification,
+        answers: updatedIdea.answers,
+        similarIdeas: updatedIdea.similarIdeas,
+      }
+    );
+    commit("SET_IDEAS", res.data);
   },
 };
 const mutations = {

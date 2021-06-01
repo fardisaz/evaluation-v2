@@ -53,7 +53,7 @@ UserSchema.pre("save", function (next) {
     },
     description: "",
     classification: "",
-    answers: [],
+    answers: ["", "", "", ""],
     similarIdeas: [],
   });
   this.ideas.push({
@@ -64,7 +64,7 @@ UserSchema.pre("save", function (next) {
     },
     description: "",
     classification: "",
-    answers: [],
+    answers: ["", "", "", ""],
     similarIdeas: [],
   });
   this.ideas.push({
@@ -75,7 +75,7 @@ UserSchema.pre("save", function (next) {
     },
     description: "",
     classification: "",
-    answers: [],
+    answers: ["", "", "", ""],
     similarIdeas: [],
   });
   this.ideas.push({
@@ -86,7 +86,7 @@ UserSchema.pre("save", function (next) {
     },
     description: "",
     classification: "",
-    answers: [],
+    answers: ["", "", "", ""],
     similarIdeas: [],
   });
   this.ideas.push({
@@ -97,7 +97,7 @@ UserSchema.pre("save", function (next) {
     },
     description: "",
     classification: "",
-    answers: [],
+    answers: ["", "", "", ""],
     similarIdeas: [],
   });
   next();

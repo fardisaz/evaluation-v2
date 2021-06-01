@@ -152,11 +152,15 @@ router.patch(
             "ideas.$.classification": req.body.classification,
           },
         },
-        function (err) {
-          console.log("This is the error for updating the value");
+        (error, result) => {
+          if (error) {
+            res.status(500).send();
+          }
+          // res.send(result);
+          console.log(result);
         }
       );
-      res.send(req.user);
+      res.send(req.user.ideas);
     } catch (e) {
       res.status(500).send();
     }

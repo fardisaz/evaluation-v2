@@ -21,21 +21,12 @@ export default {
       const descs = { descriptions: loads };
       this.importDescription(descs)
         .then(() => {
-          //console.log(res.data);
-          console.log(this.ideas.data);
+          // console.log(this.ideas.data);
           this.$router.push("/evaluation");
         })
         .catch((err) => {
           console.log(err);
         });
-      //You should work on this next
-      //write the loaded ideas into the description of idea json
-      // ideas.map((idea, index) => {
-      //   idea.description = loads[index];
-      //   this.$store.dispatch("changeIdeas", idea);
-      // });
-      //console.log(ideas);
-      //this.$router.push("/evaluation");
     },
   },
   created() {
