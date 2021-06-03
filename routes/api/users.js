@@ -85,7 +85,7 @@ router.post("/login", (req, res) => {
 });
 
 /**
- * @route POST api/users/profile
+ * @route GET api/users/profile
  * @desc Return the User's data
  * @access Private
  */
@@ -98,7 +98,7 @@ router.get(
 );
 
 /**
- * @route POST api/users/import
+ * @route PATCH api/users/import
  * @desc Return the User's ideas
  * @access Private
  */
@@ -133,7 +133,7 @@ router.patch(
   }
 );
 /**
- * @route POST api/users/ideas/:id
+ * @route PATCH api/users/ideas/:id
  * @desc Return the updates User's ideas
  * @access Private
  */
@@ -166,5 +166,58 @@ router.patch(
     }
   }
 );
+
+/**
+ * @route GET api/users/countUsers
+ * @desc Return the number of users
+ * @access Public
+ */
+router.get("/countUsers", async (req, res) => {
+  const arr = [];
+  let res1;
+  let res2;
+  res1 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 1", classification: "Novel" } },
+  });
+
+  res2 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 1", classification: "Not Novel" } },
+  });
+  arr.push({ title: "Idea 1", Novel: res1, "Not Novel": res2 });
+  res1 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 2", classification: "Novel" } },
+  });
+
+  res2 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 2", classification: "Not Novel" } },
+  });
+  arr.push({ title: "Idea 2", Novel: res1, "Not Novel": res2 });
+  res1 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 3", classification: "Novel" } },
+  });
+
+  res2 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 3", classification: "Not Novel" } },
+  });
+  arr.push({ title: "Idea 3", Novel: res1, "Not Novel": res2 });
+  res1 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 4", classification: "Novel" } },
+  });
+
+  res2 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 4", classification: "Not Novel" } },
+  });
+  arr.push({ title: "Idea 4", Novel: res1, "Not Novel": res2 });
+  res1 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 5", classification: "Novel" } },
+  });
+
+  res2 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 5", classification: "Not Novel" } },
+  });
+  arr.push({ title: "Idea 5", Novel: res1, "Not Novel": res2 });
+
+  res.json(arr);
+});
 
 module.exports = router;
