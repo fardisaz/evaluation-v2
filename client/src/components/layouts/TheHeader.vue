@@ -5,24 +5,27 @@
   </header> -->
   <nav class="navbar navbar-expand-lg navbar-light customizedHeader">
     <div class="container-fluid">
-      <router-link class="navbar-brand titleText" to="/"
+      <router-link v-if="!isLoggedIn" class="navbar-brand titleText" to="/"
+        >Novelty Evaluation</router-link
+      >
+      <router-link v-if="isLoggedIn" class="navbar-brand titleText" to="/import"
         >Novelty Evaluation</router-link
       >
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item" v-if="!isLoggedIn">
-            <router-link class="nav-link navText" to="/login"
+            <router-link class="nav-link  navText" to="/login"
               >Login</router-link
             >
           </li>
           <li class="nav-item" v-if="!isLoggedIn">
-            <router-link class="nav-link navText" to="/register"
+            <router-link class="nav-link navText " to="/register"
               >Register</router-link
             >
           </li>
           <li class="nav-item" v-if="isLoggedIn">
             <a
-              class="nav-link navText aTag"
+              class="nav-link position-absolute translate-middle end-0 navText aTag"
               to="/logout"
               @click.prevent="logoutUser"
               >Logout</a

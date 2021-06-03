@@ -2,11 +2,11 @@
   <div>
     <filter-layout></filter-layout>
     <download
-      :download-data="$store.state.ideas"
+      :download-data="ideas"
       file-type="json"
       file-name="Ideas"
       class="periodic_table"
-      button-text="Save Evaluation"
+      button-text="Download Evaluation"
     >
     </download>
     <draggable-items></draggable-items>
@@ -17,8 +17,10 @@
 import Download from "../components/Download";
 import DraggableItems from "../components/DraggableItems.vue";
 import FilterLayout from "../components/layouts/FilterLayout.vue";
+import { mapGetters } from "vuex";
 export default {
   components: { Download, DraggableItems, FilterLayout },
+  computed: { ...mapGetters(["ideas"]) },
 };
 </script>
 

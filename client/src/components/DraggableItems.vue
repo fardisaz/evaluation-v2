@@ -1,7 +1,6 @@
 <template>
   <div>
     <p>{{ ideas.data }}</p>
-    <button @click="onHello">Hello</button>
     <div v-for="idea in ideas" :key="idea._id">
       <draggable
         class="testmove"
@@ -64,7 +63,7 @@
       </template>
     </base-dialog>
     <!-- Not Novel Ideas Dialog -->
-    <base-dialog v-if="antiNovelDialog" :title="antiNovelTitle">
+    <base-dialog v-if="antiNovelDialog" :title="currentIdea.title">
       <template #default>
         <div class="questions">
           <span>What is the limitation of this idea?</span>
@@ -142,6 +141,13 @@ export default {
       this.currentDescription = _desc;
       this.clicked = true;
     },
+    onUpdate(change) {
+      this.updateIdea(change)
+        .then(() => {})
+        .catch((err) => {
+          console.log("Error has happened regarding the update function", err);
+        });
+    },
     closeDialog() {
       this.clicked = false;
     },
@@ -149,22 +155,14 @@ export default {
       this.novelDialog = false;
       //console.log(this.novelAnswers);
       console.log(this.currentIdea);
-      this.updateIdea(this.currentIdea)
-        .then(() => {})
-        .catch((err) => {
-          console.log("Error has happened regarding the update function", err);
-        });
+      this.onUpdate(this.currentIdea);
       // if (this.currentIdea.classification == "") {
       //   this.novelAnswers = ["", "", ""];
       // }
     },
     closeAntiNovel() {
       this.antiNovelDialog = false;
-      this.updateIdea(this.currentIdea)
-        .then(() => {})
-        .catch((err) => {
-          console.log("Error has happened regarding the update function", err);
-        });
+      this.onUpdate(this.currentIdea);
       // if (this.currentIdea.classification == "") {
       //   this.antiNovelAnswers = ["", "", ""];
       // }
@@ -182,42 +180,17 @@ export default {
       };
       this.currentIdea = newIdea;
       console.log(this.currentIdea);
-      this.updateIdea(newIdea)
-        .then(() => {})
-        .catch((err) => {
-          console.log("Error has happened regarding the update function", err);
-        });
-
+      this.onUpdate(newIdea);
       if (104 < y && y < 335 && 42 < x && x < 450) {
         this.novelDialog = true;
         this.currentIdea.classification = "Novel";
-        // newIdea.answers = this.currentIdea.answers;
-        // this.updateIdea(newIdea)
-        //   .then(() => {})
-        //   .catch((err) => {
-        //     console.log(
-        //       "Error has happened regarding the update function",
-        //       err
-        //     );
-        //   });
       } else if (595 < y && y < 800 && 1000 < x && x < 1410) {
         this.antiNovelDialog = true;
-        // this.antiNovelTitle = title;
         this.currentIdea.classification = "Not Novel";
-        // newIdea.answers = this.antiNovelAnswers;
-        // this.updateIdea(newIdea)
-        //   .then(() => {})
-        //   .catch((err) => {
-        //     console.log(
-        //       "Error has happened regarding the update function",
-        //       err
-        //     );
-        //   });
+      } else {
+        this.currentIdea.classification = "";
+        this.onUpdate(this.currentIdea);
       }
-    },
-    onHello() {
-      console.log(typeof this.ideas);
-      this.ideas.forEach((idea) => console.log(idea._id));
     },
   },
   created() {
@@ -246,10 +219,10 @@ export default {
   /* justify-content: center; */
 }
 .questions {
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 .answerText {
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   width: 37rem;
   height: 4rem;
 }

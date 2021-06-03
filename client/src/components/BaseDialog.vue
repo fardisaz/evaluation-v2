@@ -24,10 +24,10 @@ export default {
   props: {
     title: {
       type: String,
-      required: false
-    }
+      required: false,
+    },
   },
-  emits: ['close']
+  emits: ["close"],
 };
 </script>
 
@@ -43,7 +43,7 @@ export default {
 }
 dialog {
   position: fixed;
-  top: 20vh;
+  top: 10vh;
   left: 10%;
   width: 80%;
   z-index: 100;
