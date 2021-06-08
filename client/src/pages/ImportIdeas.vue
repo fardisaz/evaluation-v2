@@ -22,10 +22,17 @@ export default {
       this.importDescription(descs)
         .then(() => {
           // console.log(this.ideas.data);
-          this.$router.push("/evaluation");
+          this.fetchIdeas()
+            .then(() => {
+              console.log(this.ideas);
+              this.$router.push("/evaluation");
+            })
+            .catch((err) => {
+              console.log("Error in fetching the user's ideas ", err);
+            });
         })
         .catch((err) => {
-          console.log(err);
+          console.log("Error in importing the descriptions ", err);
         });
     },
   },

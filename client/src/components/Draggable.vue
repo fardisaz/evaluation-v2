@@ -15,13 +15,13 @@
 <script>
 export default {
   components: {},
-  name: 'Draggable',
+  name: "Draggable",
   props: {
     title: String,
     left: Number,
     top: Number,
     id: String,
-    description: String
+    description: String,
   },
   data: function() {
     return {
@@ -29,8 +29,8 @@ export default {
         clientX: undefined,
         clientY: undefined,
         movementX: 0,
-        movementY: 0
-      }
+        movementY: 0,
+      },
     };
   },
   computed: {},
@@ -53,36 +53,35 @@ export default {
       this.$refs.draggableContainer.style.top =
         this.$refs.draggableContainer.offsetTop -
         this.positions.movementY +
-        'px';
+        "px";
       this.$refs.draggableContainer.style.left =
         this.$refs.draggableContainer.offsetLeft -
         this.positions.movementX +
-        'px';
+        "px";
     },
     closeDragElement() {
       //sending the position of dropped element to the parent
       this.$emit(
-        'posCalc',
+        "posCalc",
         this.positions.clientX,
         this.positions.clientY,
-        this.id,
-        this.title
+        this.id
       );
       document.onmouseup = null;
       document.onmousemove = null;
     },
     calcPosOfBox() {
       //const boxABB = this.$refs['draggableContainer'].getBoundingClientRect();
-      this.$refs['draggableContainer'].style.left = this.left - 25 + 'px';
-      this.$refs['draggableContainer'].style.top = this.top - 35 + 'px';
+      this.$refs["draggableContainer"].style.left = this.left - 25 + "px";
+      this.$refs["draggableContainer"].style.top = this.top - 35 + "px";
       // d.style.left = 50 + "px";
       // d.style.top = 50 + "px";
       //console.log(boxABB);
-    }
+    },
   },
   mounted() {
     this.calcPosOfBox();
-  }
+  },
 };
 </script>
 

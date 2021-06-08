@@ -2,6 +2,7 @@
   <div>
     <filter-layout></filter-layout>
     <download
+      v-show="saved"
       :download-data="ideas"
       file-type="json"
       file-name="Ideas"
@@ -17,10 +18,11 @@
 import Download from "../components/Download";
 import DraggableItems from "../components/DraggableItems.vue";
 import FilterLayout from "../components/layouts/FilterLayout.vue";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 export default {
   components: { Download, DraggableItems, FilterLayout },
-  computed: { ...mapGetters(["ideas"]) },
+  computed: { ...mapGetters(["ideas", "saved"]) },
+  methods: { ...mapActions(["fetchIdeas"]) },
 };
 </script>
 
@@ -33,7 +35,7 @@ export default {
   width: 10rem;
   background: rgb(167, 148, 179);
   right: 0;
-  top: 90px;
+  top: 140px;
   position: absolute;
 }
 </style>

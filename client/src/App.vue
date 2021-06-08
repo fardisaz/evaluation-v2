@@ -2,17 +2,26 @@
   <div>
     <the-header></the-header>
     <main-layout></main-layout>
-    <div class="position"><router-view></router-view></div>
+    <div class="position">
+      <errors v-if="error" :msg="error"></errors>
+      <router-view></router-view>
+    </div>
   </div>
 </template>
 
 <script>
 import TheHeader from "./components/layouts/TheHeader";
 import MainLayout from "./components/layouts/MainLayout.vue";
+import { mapGetters } from "vuex";
+import Errors from "./components/Errors.vue";
 export default {
   components: {
     TheHeader,
     MainLayout,
+    Errors,
+  },
+  computed: {
+    ...mapGetters(["error"]),
   },
 };
 </script>

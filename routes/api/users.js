@@ -105,7 +105,7 @@ router.get(
 router.patch(
   "/import",
   passport.authenticate("jwt", { session: false }),
-  (req, res) => {
+  async (req, res) => {
     const descs = req.body.descriptions;
     const ideas = req.user.ideas;
     try {
@@ -126,7 +126,8 @@ router.patch(
           }
         );
       });
-      res.send(ideas);
+      //res.send(ideas);
+      res.send(req.user.ideas);
     } catch (e) {
       res.status(500).send();
     }

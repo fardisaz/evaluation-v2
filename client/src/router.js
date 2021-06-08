@@ -4,11 +4,15 @@ import NotFound from "./pages/NotFound.vue";
 import ImportIdeas from "./pages/ImportIdeas";
 import Login from "./pages/Login.vue";
 import Register from "./pages/Register.vue";
+import Home from "./pages/Home.vue";
 import store from "./store";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    // { path: '/', redirect: '/import' },
+    {
+      path: "/",
+      component: Home,
+    },
     {
       path: "/register",
       component: Register,
@@ -52,7 +56,7 @@ router.beforeEach((to, from, next) => {
     }
   } else if (to.matched.some((record) => record.meta.requiresGuest)) {
     if (store.getters.isLoggedIn) {
-      //Redirect to the login page
+      //Redirect to the evaluation page
       next("/import");
     } else {
       next();

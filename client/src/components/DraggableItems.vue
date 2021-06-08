@@ -1,7 +1,7 @@
 <template>
   <div>
     <p>{{ ideas.data }}</p>
-    <div v-for="idea in ideas" :key="idea._id">
+    <div v-for="idea in importedIdeas" :key="idea._id">
       <draggable
         class="testmove"
         :id="idea._id"
@@ -106,13 +106,35 @@
         <button @click="closeAntiNovel">Okay</button>
       </template>
     </base-dialog>
+    <button
+      type="button"
+      id="liveToast"
+      class="btn  btnPosition"
+      @click="onSave"
+    >
+      Save Evaluation
+    </button>
+    <div
+      v-if="toast"
+      class="alert alert-light alert-dismissible fade show"
+      role="alert"
+    >
+      Your evaluation is saved!
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
+        @click="closeAlert"
+      ></button>
+    </div>
   </div>
 </template>
 
 <script>
 import Draggable from "./Draggable.vue";
 import BaseDialog from "./BaseDialog.vue";
-import { mapGetters, mapActions } from "vuex";
+import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   components: {
     Draggable,
@@ -120,7 +142,7 @@ export default {
   },
   data() {
     return {
-      //ideas: [],
+      importedIdeas: null,
       clicked: false,
       currentTitle: null,
       currentDescription: null,
@@ -132,18 +154,37 @@ export default {
       novelAnswers: ["", "", ""],
       antiNovelAnswers: ["", "", ""],
       currentIdea: null,
+      toast: false,
     };
   },
   methods: {
     ...mapActions(["fetchIdeas", "updateIdea"]),
+    ...mapMutations(["UPDATE_SAVED"]),
     toggleClick(_title, _desc) {
       this.currentTitle = _title;
       this.currentDescription = _desc;
       this.clicked = true;
     },
+    onSave() {
+      this.importedIdeas.forEach((idea) => {
+        this.onUpdate(idea);
+      });
+      console.log(this.ideas);
+      this.UPDATE_SAVED(true);
+      this.toast = true;
+    },
+    closeAlert() {
+      this.toast = false;
+    },
     onUpdate(change) {
       this.updateIdea(change)
-        .then(() => {})
+        .then(() => {
+          this.fetchIdeas()
+            .then(() => {})
+            .catch((err) => {
+              console.log("Error in fetching the user's ideas ", err);
+            });
+        })
         .catch((err) => {
           console.log("Error has happened regarding the update function", err);
         });
@@ -153,49 +194,59 @@ export default {
     },
     closeNovel() {
       this.novelDialog = false;
-      //console.log(this.novelAnswers);
-      console.log(this.currentIdea);
-      this.onUpdate(this.currentIdea);
-      // if (this.currentIdea.classification == "") {
-      //   this.novelAnswers = ["", "", ""];
-      // }
+      const index = this.importedIdeas.findIndex(
+        (idea) => idea._id === this.currentIdea._id
+      );
+      this.importedIdeas[index] = {
+        ...this.importedIdeas[index],
+        answers: this.currentIdea.answers,
+      };
     },
     closeAntiNovel() {
       this.antiNovelDialog = false;
-      this.onUpdate(this.currentIdea);
-      // if (this.currentIdea.classification == "") {
-      //   this.antiNovelAnswers = ["", "", ""];
-      // }
+      const index = this.importedIdeas.findIndex(
+        (idea) => idea._id === this.currentIdea._id
+      );
+      this.importedIdeas[index] = {
+        ...this.importedIdeas[index],
+        answers: this.currentIdea.answers,
+      };
     },
-    positionCalculation(x, y, id, title) {
-      // console.log("here is the calculation", x, y, id);
-      console.log("this is title", title);
-      const index = this.ideas.findIndex((idea) => idea._id === id);
-      const newIdea = {
-        ...this.ideas[index],
+    positionCalculation(x, y, id) {
+      const index = this.importedIdeas.findIndex((idea) => idea._id === id);
+      this.importedIdeas[index] = {
+        ...this.importedIdeas[index],
         position: {
           left: x,
           top: y,
         },
       };
-      this.currentIdea = newIdea;
-      console.log(this.currentIdea);
-      this.onUpdate(newIdea);
+      this.currentIdea = this.importedIdeas[index];
       if (104 < y && y < 335 && 42 < x && x < 450) {
         this.novelDialog = true;
-        this.currentIdea.classification = "Novel";
+        this.importedIdeas[index] = {
+          ...this.importedIdeas[index],
+          classification: "Novel",
+        };
       } else if (595 < y && y < 800 && 1000 < x && x < 1410) {
         this.antiNovelDialog = true;
-        this.currentIdea.classification = "Not Novel";
+        this.importedIdeas[index] = {
+          ...this.importedIdeas[index],
+          classification: "Not Novel",
+        };
       } else {
-        this.currentIdea.classification = "";
-        this.onUpdate(this.currentIdea);
+        this.importedIdeas[index] = {
+          ...this.importedIdeas[index],
+          classification: "",
+        };
       }
     },
   },
   created() {
     //fetching the idea from user ideas model
     this.fetchIdeas();
+    this.UPDATE_SAVED(false);
+    this.importedIdeas = this.ideas;
   },
   computed: { ...mapGetters(["ideas"]) },
 };
@@ -225,5 +276,23 @@ export default {
   margin-top: 0.5rem;
   width: 37rem;
   height: 4rem;
+}
+.btnPosition {
+  color: #fff !important;
+  font-weight: bold;
+  font-size: 15px;
+  flex: 1;
+  width: 10rem;
+  height: 3rem;
+  background: rgb(167, 148, 179);
+  right: 0;
+  top: 90px;
+  position: absolute;
+}
+.alert.alert-light.alert-dismissible.fade.show {
+  /* display: flex; */
+  width: 20rem;
+  top: -40vh;
+  left: 60vh;
 }
 </style>
