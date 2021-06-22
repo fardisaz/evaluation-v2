@@ -82,7 +82,8 @@ const actions = {
       {
         position: updatedIdea.position,
         classification: updatedIdea.classification,
-        answers: updatedIdea.answers,
+        novelAnswers: updatedIdea.novelAnswers,
+        notNovelAnswers: updatedIdea.notNovelAnswers,
         similarIdeas: updatedIdea.similarIdeas,
       }
     );

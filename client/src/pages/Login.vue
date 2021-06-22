@@ -58,7 +58,14 @@ export default {
       this.login(user)
         .then((res) => {
           if (res.data.success) {
-            this.$router.push("/import");
+            if (
+              !res.data.user.ideas[0].description &&
+              !res.data.user.ideas[1].description
+            ) {
+              this.$router.push("/import");
+            } else {
+              this.$router.push("/evaluation");
+            }
           }
         })
         .catch((err) => {

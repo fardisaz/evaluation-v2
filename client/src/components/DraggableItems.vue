@@ -31,7 +31,7 @@
           <br />
           <textarea
             class="answerText"
-            v-model="currentIdea.answers[0]"
+            v-model="currentIdea.novelAnswers[0]"
             placeholder="add multiple lines"
           ></textarea>
         </div>
@@ -41,7 +41,7 @@
 
           <br />
           <textarea
-            v-model="currentIdea.answers[1]"
+            v-model="currentIdea.novelAnswers[1]"
             class="answerText"
             placeholder="add multiple lines"
           ></textarea>
@@ -52,7 +52,7 @@
 
           <br />
           <textarea
-            v-model="currentIdea.answers[2]"
+            v-model="currentIdea.novelAnswers[2]"
             class="answerText"
             placeholder="add multiple lines"
           ></textarea>
@@ -69,7 +69,7 @@
           <span>What is the limitation of this idea?</span>
           <br />
           <textarea
-            v-model="currentIdea.answers[0]"
+            v-model="currentIdea.notNovelAnswers[0]"
             class="answerText"
             placeholder="add multiple lines"
           ></textarea>
@@ -78,7 +78,7 @@
           <span>Why is this idea not novel?</span>
           <br />
           <textarea
-            v-model="currentIdea.answers[1]"
+            v-model="currentIdea.notNovelAnswers[1]"
             class="answerText"
             placeholder="add multiple lines"
           ></textarea>
@@ -87,7 +87,7 @@
           <span>Why is this idea not useful?</span>
           <br />
           <textarea
-            v-model="currentIdea.answers[2]"
+            v-model="currentIdea.notNovelAnswers[2]"
             class="answerText"
             placeholder="add multiple lines"
           ></textarea>
@@ -96,7 +96,7 @@
           <span>Can you name similar idea(s) that already exist here?</span>
           <br />
           <textarea
-            v-model="currentIdea.answers[3]"
+            v-model="currentIdea.notNovelAnswers[3]"
             class="answerText"
             placeholder="add multiple lines"
           ></textarea>
@@ -151,8 +151,6 @@ export default {
       novelTitle: null,
       antiNovelDialog: false,
       antiNovelTitle: null,
-      novelAnswers: ["", "", ""],
-      antiNovelAnswers: ["", "", ""],
       currentIdea: null,
       toast: false,
     };
@@ -199,7 +197,8 @@ export default {
       );
       this.importedIdeas[index] = {
         ...this.importedIdeas[index],
-        answers: this.currentIdea.answers,
+        novelAnswers: this.currentIdea.novelAnswers,
+        notNovelAnswers: ["", "", "", ""],
       };
     },
     closeAntiNovel() {
@@ -209,7 +208,8 @@ export default {
       );
       this.importedIdeas[index] = {
         ...this.importedIdeas[index],
-        answers: this.currentIdea.answers,
+        notNovelAnswers: this.currentIdea.notNovelAnswers,
+        novelAnswers: ["", "", ""],
       };
     },
     positionCalculation(x, y, id) {
@@ -238,15 +238,22 @@ export default {
         this.importedIdeas[index] = {
           ...this.importedIdeas[index],
           classification: "",
+          notNovelAnswers: ["", "", "", ""],
+          novelAnswers: ["", "", ""],
         };
       }
     },
   },
   created() {
     //fetching the idea from user ideas model
-    this.fetchIdeas();
-    this.UPDATE_SAVED(false);
-    this.importedIdeas = this.ideas;
+    this.fetchIdeas()
+      .then(() => {
+        this.UPDATE_SAVED(false);
+        this.importedIdeas = this.ideas;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   },
   computed: { ...mapGetters(["ideas"]) },
 };
@@ -285,8 +292,8 @@ export default {
   width: 10rem;
   height: 3rem;
   background: rgb(167, 148, 179);
-  right: 0;
-  top: 90px;
+  top: 1rem;
+  right: 0.6rem;
   position: absolute;
 }
 .alert.alert-light.alert-dismissible.fade.show {

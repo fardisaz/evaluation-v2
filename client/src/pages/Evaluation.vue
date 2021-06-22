@@ -23,6 +23,13 @@ export default {
   components: { Download, DraggableItems, FilterLayout },
   computed: { ...mapGetters(["ideas", "saved"]) },
   methods: { ...mapActions(["fetchIdeas"]) },
+  created() {
+    this.fetchIdeas()
+      .then(() => {})
+      .catch((err) => {
+        console.log(err);
+      });
+  },
 };
 </script>
 
@@ -34,8 +41,8 @@ export default {
   flex: 1;
   width: 10rem;
   background: rgb(167, 148, 179);
-  right: 0;
-  top: 140px;
+  top: 1rem;
+  right: 12rem;
   position: absolute;
 }
 </style>

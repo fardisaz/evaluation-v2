@@ -6,7 +6,7 @@
       @dblclick="$emit('openDialog', title, description)"
     >
       <p>
-        {{ title }} - top: {{ positions.clientY }} -left:{{ positions.clientX }}
+        {{ title }}
       </p>
     </div>
   </div>

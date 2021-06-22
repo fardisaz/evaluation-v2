@@ -18,7 +18,10 @@ const IdeaSchema = new Schema({
   classification: {
     type: String,
   },
-  answers: {
+  novelAnswers: {
+    type: Array,
+  },
+  notNovelAnswers: {
     type: Array,
   },
   similarIdeas: {
@@ -53,7 +56,8 @@ UserSchema.pre("save", function (next) {
     },
     description: "",
     classification: "",
-    answers: ["", "", "", ""],
+    novelAnswers: ["", "", ""],
+    notNovelAnswers: ["", "", "", ""],
     similarIdeas: [],
   });
   this.ideas.push({
@@ -64,7 +68,8 @@ UserSchema.pre("save", function (next) {
     },
     description: "",
     classification: "",
-    answers: ["", "", "", ""],
+    novelAnswers: ["", "", ""],
+    notNovelAnswers: ["", "", "", ""],
     similarIdeas: [],
   });
   this.ideas.push({
@@ -75,7 +80,8 @@ UserSchema.pre("save", function (next) {
     },
     description: "",
     classification: "",
-    answers: ["", "", "", ""],
+    novelAnswers: ["", "", ""],
+    notNovelAnswers: ["", "", "", ""],
     similarIdeas: [],
   });
   this.ideas.push({
@@ -86,7 +92,8 @@ UserSchema.pre("save", function (next) {
     },
     description: "",
     classification: "",
-    answers: ["", "", "", ""],
+    novelAnswers: ["", "", ""],
+    notNovelAnswers: ["", "", "", ""],
     similarIdeas: [],
   });
   this.ideas.push({
@@ -97,10 +104,17 @@ UserSchema.pre("save", function (next) {
     },
     description: "",
     classification: "",
-    answers: ["", "", "", ""],
+    novelAnswers: ["", "", ""],
+    notNovelAnswers: ["", "", "", ""],
     similarIdeas: [],
   });
   next();
 });
+
+UserSchema.statics.ideasToArray = function () {
+  let users = this.find({});
+  let ideas = users.distinct("ideas");
+  return ideas;
+};
 
 module.exports = User = mongoose.model("users", UserSchema);

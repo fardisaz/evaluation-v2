@@ -25,7 +25,7 @@
           </li>
           <li class="nav-item" v-if="isLoggedIn">
             <a
-              class="nav-link position-absolute translate-middle end-0 navText aTag"
+              class="nav-link   navText aTag"
               to="/logout"
               @click.prevent="logoutUser"
               >Logout</a

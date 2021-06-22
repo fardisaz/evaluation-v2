@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const key = require("../../config/keys").secret;
 const User = require("../../model/User");
-
+const axios = require("axios");
 /**
  * @route POST api/users/register
  * @desc Register the User
@@ -147,7 +147,8 @@ router.patch(
         { "ideas._id": req.params.id },
         {
           $set: {
-            "ideas.$.answers": req.body.answers,
+            "ideas.$.novelAnswers": req.body.novelAnswers,
+            "ideas.$.notNovelAnswers": req.body.notNovelAnswers,
             "ideas.$.similarIdeas": req.body.similarIdeas,
             "ideas.$.position": req.body.position,
             "ideas.$.classification": req.body.classification,
@@ -169,14 +170,52 @@ router.patch(
 );
 
 /**
- * @route GET api/users/countUsers
- * @desc Return the number of users
+ * @route GET api/users/countNovelty
+ * @desc Return the ideas with the information like how many users rate them as novel/not novel and all their answers to the questions
  * @access Public
  */
-router.get("/countUsers", async (req, res) => {
+router.get("/countNovelty", async (req, res) => {
   const arr = [];
   let res1;
   let res2;
+  const ideas = await User.ideasToArray();
+  const novelArr = (inputTitle, ideas) => {
+    let newArr = [];
+    ideas.forEach((idea) => {
+      if (idea.title === inputTitle) {
+        if (
+          !idea.novelAnswers[0] &&
+          !idea.novelAnswers[1] &&
+          !idea.novelAnswers[2]
+        ) {
+          newArr;
+        } else {
+          newArr.push(idea.novelAnswers);
+        }
+      }
+    });
+    let merged = [].concat.apply([], newArr);
+    return merged;
+  };
+  const antiNovelArr = (inputTitle, ideas) => {
+    let newArr = [];
+    ideas.forEach((idea) => {
+      if (idea.title === inputTitle) {
+        if (
+          !idea.notNovelAnswers[0] &&
+          !idea.notNovelAnswers[1] &&
+          !idea.notNovelAnswers[2] &&
+          !idea.notNovelAnswers[3]
+        ) {
+          newArr;
+        } else {
+          newArr.push(idea.notNovelAnswers);
+        }
+      }
+    });
+    let merged = [].concat.apply([], newArr);
+    return merged;
+  };
   res1 = await User.count({
     ideas: { $elemMatch: { title: "Idea 1", classification: "Novel" } },
   });
@@ -184,7 +223,14 @@ router.get("/countUsers", async (req, res) => {
   res2 = await User.count({
     ideas: { $elemMatch: { title: "Idea 1", classification: "Not Novel" } },
   });
-  arr.push({ title: "Idea 1", Novel: res1, "Not Novel": res2 });
+
+  arr.push({
+    title: "Idea 1",
+    Novel: res1,
+    "Not Novel": res2,
+    "Novel Answers": novelArr("Idea 1", ideas),
+    "Not Novel Answers": antiNovelArr("Idea 1", ideas),
+  });
   res1 = await User.count({
     ideas: { $elemMatch: { title: "Idea 2", classification: "Novel" } },
   });
@@ -192,7 +238,13 @@ router.get("/countUsers", async (req, res) => {
   res2 = await User.count({
     ideas: { $elemMatch: { title: "Idea 2", classification: "Not Novel" } },
   });
-  arr.push({ title: "Idea 2", Novel: res1, "Not Novel": res2 });
+  arr.push({
+    title: "Idea 2",
+    Novel: res1,
+    "Not Novel": res2,
+    "Novel Answers": novelArr("Idea 2", ideas),
+    "Not Novel Answers": antiNovelArr("Idea 2", ideas),
+  });
   res1 = await User.count({
     ideas: { $elemMatch: { title: "Idea 3", classification: "Novel" } },
   });
@@ -200,7 +252,13 @@ router.get("/countUsers", async (req, res) => {
   res2 = await User.count({
     ideas: { $elemMatch: { title: "Idea 3", classification: "Not Novel" } },
   });
-  arr.push({ title: "Idea 3", Novel: res1, "Not Novel": res2 });
+  arr.push({
+    title: "Idea 3",
+    Novel: res1,
+    "Not Novel": res2,
+    "Novel Answers": novelArr("Idea 3", ideas),
+    "Not Novel Answers": antiNovelArr("Idea 3", ideas),
+  });
   res1 = await User.count({
     ideas: { $elemMatch: { title: "Idea 4", classification: "Novel" } },
   });
@@ -208,7 +266,13 @@ router.get("/countUsers", async (req, res) => {
   res2 = await User.count({
     ideas: { $elemMatch: { title: "Idea 4", classification: "Not Novel" } },
   });
-  arr.push({ title: "Idea 4", Novel: res1, "Not Novel": res2 });
+  arr.push({
+    title: "Idea 4",
+    Novel: res1,
+    "Not Novel": res2,
+    "Novel Answers": novelArr("Idea 4", ideas),
+    "Not Novel Answers": antiNovelArr("Idea 4", ideas),
+  });
   res1 = await User.count({
     ideas: { $elemMatch: { title: "Idea 5", classification: "Novel" } },
   });
@@ -216,9 +280,36 @@ router.get("/countUsers", async (req, res) => {
   res2 = await User.count({
     ideas: { $elemMatch: { title: "Idea 5", classification: "Not Novel" } },
   });
-  arr.push({ title: "Idea 5", Novel: res1, "Not Novel": res2 });
+  arr.push({
+    title: "Idea 5",
+    Novel: res1,
+    "Not Novel": res2,
+    "Novel Answers": novelArr("Idea 5", ideas),
+    "Not Novel Answers": antiNovelArr("Idea 5", ideas),
+  });
+  const total = await User.count({});
 
-  res.json(arr);
+  res.json({ total, arr });
 });
 
+/**
+ * @route GET api/users/similarity
+ * @desc Return the number of users
+ * @access Public
+ */
+router.get("/similarity", async (req, res) => {
+  let text1 = req.body.text1.split(" ").join("%20") + "%20";
+  let text2 = req.body.text2.split(" ").join("%20") + "%20";
+  // the token for the following link needs to be changed every 12 hrs
+  const url = `https://api.dandelion.eu/datatxt/sim/v1/?text1=${text1}&text2=${text2}&token=943cd78b08354bd2b7d49669fc3d6ba3`;
+  axios
+    .get(url)
+    .then((response) => {
+      console.log("this is the response: ", response.data);
+      res.send(response.data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+});
 module.exports = router;
