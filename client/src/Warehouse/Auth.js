@@ -16,6 +16,7 @@ const getters = {
   ideas: (state) => state.ideas,
   saved: (state) => state.saved,
   error: (state) => state.error,
+  token: (state) => state.token,
 };
 const actions = {
   //Login Action
@@ -69,6 +70,7 @@ const actions = {
   },
   //import descriptions
   async importDescription({ commit }, ideaArray) {
+    console.log("Here is the ideaArr", ideaArray);
     let res = await axios.patch(
       "http://localhost:5000/api/users/import",
       ideaArray
@@ -88,6 +90,14 @@ const actions = {
       }
     );
     commit("SET_IDEAS", res.data);
+  },
+  //compare ideas
+  async compareIdeas(_, payload) {
+    let res = await axios.post("http://localhost:5000/api/users/similarity", {
+      text1: payload.text1,
+      text2: payload.text2,
+    });
+    return res.data.similarity;
   },
 };
 const mutations = {

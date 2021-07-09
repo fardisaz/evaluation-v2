@@ -293,23 +293,26 @@ router.get("/countNovelty", async (req, res) => {
 });
 
 /**
- * @route GET api/users/similarity
- * @desc Return the number of users
- * @access Public
+ * @route POST api/users/similarity
+ * @desc Return the similarity of ideas
+ * @access Private
  */
-router.get("/similarity", async (req, res) => {
-  let text1 = req.body.text1.split(" ").join("%20") + "%20";
-  let text2 = req.body.text2.split(" ").join("%20") + "%20";
-  // the token for the following link needs to be changed every 12 hrs
-  const url = `https://api.dandelion.eu/datatxt/sim/v1/?text1=${text1}&text2=${text2}&token=943cd78b08354bd2b7d49669fc3d6ba3`;
-  axios
-    .get(url)
-    .then((response) => {
-      console.log("this is the response: ", response.data);
-      res.send(response.data);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-});
+router.post(
+  "/similarity",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    let text1 = req.body.text1;
+    let text2 = req.body.text2;
+    const url = `https://api.dandelion.eu/datatxt/sim/v1/?text1=${text1}&text2=${text2}&token=943cd78b08354bd2b7d49669fc3d6ba3`;
+    axios
+      .get(url)
+      .then((response) => {
+        console.log("this is the response: ", response.data);
+        res.send(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+);
 module.exports = router;

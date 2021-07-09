@@ -109,11 +109,17 @@
     <button
       type="button"
       id="liveToast"
-      class="btn  btnPosition"
+      class="btn btnPosition"
       @click="onSave"
     >
       Save Evaluation
     </button>
+    <file-reader
+      @load="autoEval"
+      class="btn evalBtn"
+      title="Automatic Evaluation"
+    >
+    </file-reader>
     <div
       v-if="toast"
       class="alert alert-light alert-dismissible fade show"
@@ -134,11 +140,13 @@
 <script>
 import Draggable from "./Draggable.vue";
 import BaseDialog from "./BaseDialog.vue";
+import FileReader from "./FileReader.vue";
 import { mapGetters, mapActions, mapMutations } from "vuex";
 export default {
   components: {
     Draggable,
     BaseDialog,
+    FileReader,
   },
   data() {
     return {
@@ -156,7 +164,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["fetchIdeas", "updateIdea"]),
+    ...mapActions(["fetchIdeas", "updateIdea", "compareIdeas"]),
     ...mapMutations(["UPDATE_SAVED"]),
     toggleClick(_title, _desc) {
       this.currentTitle = _title;
@@ -243,6 +251,33 @@ export default {
         };
       }
     },
+    autoEval(input) {
+      console.log("Auto evaluation");
+      const loads = input.split("//");
+      // let text1 = loads[0].split(" ").join("%20") + "%20";
+      // console.log();
+      // let text2 = this.ideas[0].description.split(" ").join("%20") + "%20";
+      loads.forEach((load) => {
+        this.ideas.forEach(async (idea) => {
+          let text1 = load.split(" ").join("%20") + "%20";
+          let text2 = idea.description.split(" ").join("%20") + "%20";
+          let sim = await this.compareIdeas({
+            text1,
+            text2,
+          });
+
+          if (sim > 0.5) {
+            console.log(
+              load,
+              " and ",
+              idea.description,
+              " are similar texts with the similarity of ",
+              sim
+            );
+          }
+        });
+      });
+    },
   },
   created() {
     //fetching the idea from user ideas model
@@ -255,7 +290,7 @@ export default {
         console.log(err);
       });
   },
-  computed: { ...mapGetters(["ideas"]) },
+  computed: { ...mapGetters(["ideas", "token"]) },
 };
 </script>
 
@@ -296,10 +331,22 @@ export default {
   right: 0.6rem;
   position: absolute;
 }
+.evalBtn {
+  color: #fff !important;
+  font-weight: bold;
+  font-size: 15px;
+  flex: 1;
+  width: 12rem;
+  height: 3rem;
+  background: rgb(167, 148, 179);
+  top: 1rem;
+  right: 45rem;
+  position: absolute;
+}
 .alert.alert-light.alert-dismissible.fade.show {
   /* display: flex; */
   width: 20rem;
-  top: -40vh;
-  left: 60vh;
+  top: -35vh;
+  left: 64vh;
 }
 </style>

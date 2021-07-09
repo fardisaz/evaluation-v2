@@ -1,7 +1,7 @@
 <template>
   <div>
     <filter-layout></filter-layout>
-    <file-reader @load="loadIdeas" class="import_button">
+    <file-reader @load="loadIdeas" class="import_button" title="Load Ideas">
       <!-- <router-link to="/evaluation"></router-link> -->
     </file-reader>
   </div>
@@ -21,10 +21,8 @@ export default {
       const descs = { descriptions: loads };
       this.importDescription(descs)
         .then(() => {
-          // console.log(this.ideas.data);
           this.fetchIdeas()
             .then(() => {
-              console.log(this.ideas);
               this.$router.push("/evaluation");
             })
             .catch((err) => {

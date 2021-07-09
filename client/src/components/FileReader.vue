@@ -1,12 +1,13 @@
 <template>
   <label class="text-reader">
-    Load Ideas
+    {{ title }}
     <input type="file" @change="loadTextFromFile" />
   </label>
 </template>
 
 <script>
 export default {
+  props: ["title"],
   methods: {
     loadTextFromFile(ev) {
       const file = ev.target.files[0];
