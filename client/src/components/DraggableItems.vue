@@ -164,7 +164,7 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["fetchIdeas", "updateIdea", "compareIdeas"]),
+    ...mapActions(["fetchIdeas", "updateIdea", "compareIdeas", "countNovelty"]),
     ...mapMutations(["UPDATE_SAVED"]),
     toggleClick(_title, _desc) {
       this.currentTitle = _title;
@@ -235,12 +235,14 @@ export default {
         this.importedIdeas[index] = {
           ...this.importedIdeas[index],
           classification: "Novel",
+          notNovelAnswers: ["", "", "", ""],
         };
       } else if (595 < y && y < 800 && 1000 < x && x < 1410) {
         this.antiNovelDialog = true;
         this.importedIdeas[index] = {
           ...this.importedIdeas[index],
           classification: "Not Novel",
+          novelAnswers: ["", "", ""],
         };
       } else {
         this.importedIdeas[index] = {
@@ -252,15 +254,26 @@ export default {
       }
     },
     autoEval(input) {
+      // For next phase please read the comments in this function
+      // For this function it's better to go to another page and do the rest of evaluation there
       console.log("Auto evaluation");
       const loads = input.split("//");
-      // let text1 = loads[0].split(" ").join("%20") + "%20";
-      // console.log();
-      // let text2 = this.ideas[0].description.split(" ").join("%20") + "%20";
+
       loads.forEach((load) => {
-        this.ideas.forEach(async (idea) => {
+        this.ideas.forEach(async (idea, index) => {
           let text1 = load.split(" ").join("%20") + "%20";
           let text2 = idea.description.split(" ").join("%20") + "%20";
+          console.log(index);
+          // here I want to see the right evaluation for the automatic evaluation
+          // let totalEval = await this.countNovelty();
+          // console.log(totalEval);
+          // if (
+          //   totalEval.arr[index].Novel > totalEval.arr[index].NotNovel &&
+          //   totalEval.total ==
+          //     totalEval.arr[index].Novel + totalEval.arr[index].NotNovel
+          // )
+          // {
+          // }
           let sim = await this.compareIdeas({
             text1,
             text2,

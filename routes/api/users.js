@@ -227,9 +227,9 @@ router.get("/countNovelty", async (req, res) => {
   arr.push({
     title: "Idea 1",
     Novel: res1,
-    "Not Novel": res2,
-    "Novel Answers": novelArr("Idea 1", ideas),
-    "Not Novel Answers": antiNovelArr("Idea 1", ideas),
+    NotNovel: res2,
+    NovelAnswers: novelArr("Idea 1", ideas),
+    NotNovelAnswers: antiNovelArr("Idea 1", ideas),
   });
   res1 = await User.count({
     ideas: { $elemMatch: { title: "Idea 2", classification: "Novel" } },
@@ -241,9 +241,9 @@ router.get("/countNovelty", async (req, res) => {
   arr.push({
     title: "Idea 2",
     Novel: res1,
-    "Not Novel": res2,
-    "Novel Answers": novelArr("Idea 2", ideas),
-    "Not Novel Answers": antiNovelArr("Idea 2", ideas),
+    NotNovel: res2,
+    NovelAnswers: novelArr("Idea 2", ideas),
+    NotNovelAnswers: antiNovelArr("Idea 2", ideas),
   });
   res1 = await User.count({
     ideas: { $elemMatch: { title: "Idea 3", classification: "Novel" } },
@@ -255,9 +255,9 @@ router.get("/countNovelty", async (req, res) => {
   arr.push({
     title: "Idea 3",
     Novel: res1,
-    "Not Novel": res2,
-    "Novel Answers": novelArr("Idea 3", ideas),
-    "Not Novel Answers": antiNovelArr("Idea 3", ideas),
+    NotNovel: res2,
+    NovelAnswers: novelArr("Idea 3", ideas),
+    NotNovelAnswers: antiNovelArr("Idea 3", ideas),
   });
   res1 = await User.count({
     ideas: { $elemMatch: { title: "Idea 4", classification: "Novel" } },
@@ -269,9 +269,9 @@ router.get("/countNovelty", async (req, res) => {
   arr.push({
     title: "Idea 4",
     Novel: res1,
-    "Not Novel": res2,
-    "Novel Answers": novelArr("Idea 4", ideas),
-    "Not Novel Answers": antiNovelArr("Idea 4", ideas),
+    NotNovel: res2,
+    NovelAnswers: novelArr("Idea 4", ideas),
+    NotNovelAnswers: antiNovelArr("Idea 4", ideas),
   });
   res1 = await User.count({
     ideas: { $elemMatch: { title: "Idea 5", classification: "Novel" } },
@@ -283,9 +283,9 @@ router.get("/countNovelty", async (req, res) => {
   arr.push({
     title: "Idea 5",
     Novel: res1,
-    "Not Novel": res2,
-    "Novel Answers": novelArr("Idea 5", ideas),
-    "Not Novel Answers": antiNovelArr("Idea 5", ideas),
+    NotNovel: res2,
+    NovelAnswers: novelArr("Idea 5", ideas),
+    NotNovelAnswers: antiNovelArr("Idea 5", ideas),
   });
   const total = await User.count({});
 

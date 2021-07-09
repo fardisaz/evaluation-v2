@@ -99,6 +99,12 @@ const actions = {
     });
     return res.data.similarity;
   },
+  //count (not)novelty
+  async countNovelty() {
+    let res = await axios.get("http://localhost:5000/api/users/countNovelty");
+    console.log(res.data);
+    return res.data;
+  },
 };
 const mutations = {
   auth_request(state) {
