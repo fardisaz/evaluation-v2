@@ -1,6 +1,6 @@
 <template>
   <div>
-    <p>{{ ideas.data }}</p>
+    <!-- <p>{{ ideas.data }}</p> -->
     <div v-for="idea in importedIdeas" :key="idea._id">
       <draggable
         class="testmove"
@@ -154,7 +154,6 @@ export default {
       clicked: false,
       currentTitle: null,
       currentDescription: null,
-      ideaItem: {},
       novelDialog: false,
       novelTitle: null,
       antiNovelDialog: false,
@@ -165,7 +164,7 @@ export default {
   },
   methods: {
     ...mapActions(["fetchIdeas", "updateIdea", "compareIdeas", "countNovelty"]),
-    ...mapMutations(["UPDATE_SAVED"]),
+    ...mapMutations(["UPDATE_SAVED","SET_NEW_IDEAS"]),
     toggleClick(_title, _desc) {
       this.currentTitle = _title;
       this.currentDescription = _desc;
@@ -258,39 +257,14 @@ export default {
       // For this function it's better to go to another page and do the rest of evaluation there
       console.log("Auto evaluation");
       const loads = input.split("//");
-
-      loads.forEach((load) => {
-        this.ideas.forEach(async (idea, index) => {
-          let text1 = load.split(" ").join("%20") + "%20";
-          let text2 = idea.description.split(" ").join("%20") + "%20";
-          console.log(index);
-          // here I want to see the right evaluation for the automatic evaluation
-          // let totalEval = await this.countNovelty();
-          // console.log(totalEval);
-          // if (
-          //   totalEval.arr[index].Novel > totalEval.arr[index].NotNovel &&
-          //   totalEval.total ==
-          //     totalEval.arr[index].Novel + totalEval.arr[index].NotNovel
-          // )
-          // {
-          // }
-          let sim = await this.compareIdeas({
-            text1,
-            text2,
-          });
-
-          if (sim > 0.5) {
-            console.log(
-              load,
-              " and ",
-              idea.description,
-              " are similar texts with the similarity of ",
-              sim
-            );
-          }
-        });
-      });
-    },
+      let arr=[]
+      loads.forEach(load=>{
+        arr.push({"description":load})
+      })
+      this.SET_NEW_IDEAS(arr)
+      this.$router.push("/automaticEvaluation");
+   
+     },
   },
   created() {
     //fetching the idea from user ideas model
@@ -303,7 +277,7 @@ export default {
         console.log(err);
       });
   },
-  computed: { ...mapGetters(["ideas", "token"]) },
+  computed: { ...mapGetters(["ideas", "token","newIdeas"]) },
 };
 </script>
 

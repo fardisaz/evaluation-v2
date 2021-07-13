@@ -5,6 +5,7 @@ import ImportIdeas from "./pages/ImportIdeas";
 import Login from "./pages/Login.vue";
 import Register from "./pages/Register.vue";
 import Home from "./pages/Home.vue";
+import AutomaticEval from './pages/AutomaticEval.vue'
 import store from "./store";
 const router = createRouter({
   history: createWebHistory(),
@@ -37,6 +38,13 @@ const router = createRouter({
     {
       path: "/evaluation",
       component: Evaluation,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: "/automaticEvaluation",
+      component: AutomaticEval,
       meta: {
         requiresAuth: true,
       },

@@ -8,6 +8,7 @@ const state = {
   ideas: [],
   saved: false,
   error: null,
+  newIdeas:[]
 };
 const getters = {
   isLoggedIn: (state) => !!state.token,
@@ -17,6 +18,7 @@ const getters = {
   saved: (state) => state.saved,
   error: (state) => state.error,
   token: (state) => state.token,
+  newIdeas:(state)=>state.newIdeas
 };
 const actions = {
   //Login Action
@@ -102,7 +104,7 @@ const actions = {
   //count (not)novelty
   async countNovelty() {
     let res = await axios.get("http://localhost:5000/api/users/countNovelty");
-    console.log(res.data);
+    // console.log(res.data);
     return res.data;
   },
 };
@@ -144,6 +146,10 @@ const mutations = {
   UPDATE_SAVED(state, saved) {
     state.saved = saved;
   },
+  //NewIdeas Mutation
+  SET_NEW_IDEAS(state,newIdeas){
+    state.newIdeas=newIdeas
+  }
 };
 
 export default {
