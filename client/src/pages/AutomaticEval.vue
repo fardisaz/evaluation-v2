@@ -9,7 +9,8 @@
       button-text="Download Evaluation"
     >
     </download>
-    <div v-for="(idea,index) in importedNewIdeas" :key="index">
+    <button @click="onAutomatic">Click to see</button>
+    <div v-for="(idea,index) in importedIdea" :key="index">
       <draggable
         class="testmove"
         :id="index"
@@ -48,8 +49,10 @@ export default {
         importedNewIdeas:null,
         clicked: false,
         convertedNewIdea:[],
+        importedIdea:[],
         finalEvaluation:[],
-        sim:[0.51,0.63,0.23,0.31,0.45]
+        // sim:[0.51,0.63,0.23,0.31,0.45]
+        sim:[]
       }
     },
   computed: { ...mapGetters(["ideas", "saved","newIdeas"]) },
@@ -66,65 +69,87 @@ async finalEvalMethod(){
             (totalEval.total ==
               item.Novel + item.NotNovel || item.Novel>totalEval.total-item.Novel)
           ){
-            this.finalEvaluation.push({classification: "Novel",title:item.title,novelAnswers:item.NovelAnswers,
+            let desc=this.ideas.find((idea)=>idea.title==item.title).description
+            this.finalEvaluation.push({classification: "Novel",title:item.title,novelAnswers:item.NovelAnswers.join(" "),
+            description:desc,
             position:{left: this.randomIntFromInterval(42, 450),
       top: this.randomIntFromInterval(104, 335)}})
           }
            else if(item.NotNovel > item.Novel &&
               (totalEval.total ==
               item.Novel + item.NotNovel || item.NotNovel>totalEval.total-item.NotNovel)){
-                this.finalEvaluation.push({classification: "Not Novel",title:item.title,notNovelAnswers:item.NotNovelAnswers,
+                let desc=this.ideas.find((idea)=>idea.title==item.title).description
+                this.finalEvaluation.push({classification: "Not Novel",title:item.title,notNovelAnswers:item.NotNovelAnswers.join(" "),
+                description:desc,
             position:{left: this.randomIntFromInterval(1000, 1410),
        top: this.randomIntFromInterval(595, 800)}})
               }
               else{
+                let desc=this.ideas.find((idea)=>idea.title==item.title).description
                 this.finalEvaluation.push({classification: "",title:item.title,
+                description:desc,
             position:{left: this.randomIntFromInterval(455, 995),
        top: this.randomIntFromInterval(340, 590),}})
               }
   })
+  
   console.log("This is the final evaluation",this.finalEvaluation);
 },
- onStart(){
-    // First we need to check what is the evaluation of ideas based on all user's input
-      this.finalEvalMethod().then(()=>{
-         this.newIdeas.forEach(async(load, index) => {
-          if (this.sim[index] > 0.5) {
+async similarityMethod(){
+  let newArr=[];
+   this.newIdeas.forEach(async(item,index)=>{
+     let text1=item.description.split(" ").join("%20") + "%20";
+     let text2=this.finalEvaluation[index].description.split(" ").join("%20") + "%20";
+    this.convertedNewIdea.push({
+              ...item,
+              title:this.finalEvaluation[index].title
+            })
+      let similarity=await this.compareIdeas({text1,text2})
+      newArr.push({similarity,title:this.finalEvaluation[index].title})
+     
+   })
+  //     newArr= new Promise((resolve) => {
+  //   resolve([{title:"Idea 3",similarity:0.51},{title:"Idea 1",similarity:0.63},{title:"Idea 5",similarity:0.23},{title:"Idea 2",similarity:0.31},{title:"Idea 4",similarity:0.45}]);
+  // })
+   return newArr
+},
+onAutomatic(){
+  // console.log("this is the converted",this.convertedNewIdea);
+this.convertedNewIdea.forEach(async(load, index) => {
+  console.log(load.title);
+          if (this.sim.find(s=>s.title==load.title).similarity > 0.5) {
             // console.log(arr[index]);
-            this.convertedNewIdea.push({
+            this.importedIdea.push({
               ...load,
               ...this.finalEvaluation[index]
             })
              }
     else{
-      this.convertedNewIdea.push({...load,classification:"",
+      this.importedIdea.push({...load,
+      // title:this.finalEvaluation[index].title,
+      classification:"",
             position: {
       left: this.randomIntFromInterval(455, 995),
       top: this.randomIntFromInterval(340, 590)}
     })}
       })
-          // here I want to see the right evaluation for the automatic evaluation
-            // let mergedDesc=idea.description+convertedAnswers.join(" ")
-          //     let text1 = load.description.split(" ").join("%20") + "%20";
-          // let text2 = mergedDesc.split(" ").join("%20") + "%20";
-          //   let sim = await this.compareIdeas({
-          //   text1,
-          //   text2,
-          // });
-      });
-     
-     
+       console.log("This is the imported Ideas",this.importedIdea); 
+},
+ onStart(){
+    // First we need to check what is the evaluation of ideas based on all user's input
+      this.finalEvalMethod().then(async()=>{
+        this.sim=await this.similarityMethod()
+        console.log("This is the SIM",this.sim);
+      });  
   }
   },
   created() {
     this.fetchIdeas()
       .then(() => {
-          this.onStart()
-            console.log("This is the converted new Ideas",this.convertedNewIdea);
-            
+           this.onStart()
+           
         //  this.SET_NEW_IDEAS(arr)
         console.log("this is the new ideas",this.newIdeas);
-         
         // this.finalEvalMethod()
          
       })
