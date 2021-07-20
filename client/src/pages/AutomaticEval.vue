@@ -9,7 +9,7 @@
       button-text="Download Evaluation"
     >
     </download>
-    <button @click="onAutomatic">Click to see</button>
+    <button @click="onAutomatic" class="btn btnSide">Click to see</button>
     <div v-for="(idea,index) in importedIdea" :key="index">
       <draggable
         class="testmove"
@@ -51,8 +51,9 @@ export default {
         convertedNewIdea:[],
         importedIdea:[],
         finalEvaluation:[],
-        // sim:[0.51,0.63,0.23,0.31,0.45]
-        sim:[]
+        sim:[],
+        currentTitle: null,
+      currentDescription: null,
       }
     },
   computed: { ...mapGetters(["ideas", "saved","newIdeas"]) },
@@ -61,6 +62,14 @@ export default {
    randomIntFromInterval(min, max) { // min and max included 
   return Math.floor(Math.random() * (max - min + 1) + min)
 },
+toggleClick(_title, _desc) {
+      this.currentTitle = _title;
+      this.currentDescription = _desc;
+      this.clicked = true;
+    },
+    closeDialog() {
+      this.clicked = false;
+    },
 async finalEvalMethod(){
   let totalEval = await this.countNovelty();
   totalEval.arr.forEach(item=>{
@@ -108,15 +117,15 @@ async similarityMethod(){
       newArr.push({similarity,title:this.finalEvaluation[index].title})
      
    })
+  //  Mock api response for testing
   //     newArr= new Promise((resolve) => {
   //   resolve([{title:"Idea 3",similarity:0.51},{title:"Idea 1",similarity:0.63},{title:"Idea 5",similarity:0.23},{title:"Idea 2",similarity:0.31},{title:"Idea 4",similarity:0.45}]);
-  // })
+  //  })
    return newArr
 },
 onAutomatic(){
   // console.log("this is the converted",this.convertedNewIdea);
 this.convertedNewIdea.forEach(async(load, index) => {
-  console.log(load.title);
           if (this.sim.find(s=>s.title==load.title).similarity > 0.5) {
             // console.log(arr[index]);
             this.importedIdea.push({
@@ -169,6 +178,18 @@ this.convertedNewIdea.forEach(async(load, index) => {
   flex: 1;
   width: 10rem;
   background: rgb(167, 148, 179);
+  top: 1rem;
+  right: 0.6rem;
+  position: absolute;
+}
+.btnSide{
+color: #fff !important;
+  font-weight: bold;
+  font-size: 15px;
+  flex: 1;
+  width: 10rem;
+  height: 3rem;
+  /* background: rgb(167, 148, 179); */
   top: 1rem;
   right: 12rem;
   position: absolute;

@@ -327,7 +327,7 @@ export default {
   height: 3rem;
   background: rgb(167, 148, 179);
   top: 1rem;
-  right: 45rem;
+  right: 12rem;
   position: absolute;
 }
 .alert.alert-light.alert-dismissible.fade.show {
