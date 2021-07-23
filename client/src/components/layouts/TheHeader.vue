@@ -54,16 +54,16 @@ export default {
 
 <style scoped>
 .customizedHeader {
-  background: rgb(187, 165, 196);
-  color: #725e88;
+  background: rgb(217, 236, 248);
+  color: #132535;
   margin-bottom: 10px;
 }
 .titleText {
-  color: #725e88;
+  color: #01080e;
   font-size: 30px;
 }
 .navText {
-  color: #725e88;
+  color: #01080e;
 }
 .aTag {
   cursor: pointer;
@@ -72,7 +72,7 @@ export default {
 a:active,
 a:hover,
 a.router-link-active {
-  border: 1px solid #f391e3;
+  border: 1px solid #f5eef4;
 }
 
 h1 {

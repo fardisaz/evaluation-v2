@@ -41,7 +41,7 @@ body {
   padding: 0;
   margin: 0;
 
-  background-color: rgb(234, 206, 245);
+  background-color: rgb(247, 244, 248);
 }
 .position {
   padding: 1rem;

@@ -55,7 +55,7 @@ dialog {
   overflow: hidden;
 }
 header {
-  background-color: #725e88;
+  background-color: #3d9eec;
   color: white;
   width: 100%;
   padding: 1rem;

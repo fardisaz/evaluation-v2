@@ -15,12 +15,12 @@ export default {};
 <style>
 .classification {
   display: flex;
-  color: rgb(234, 206, 245);
+  color: rgb(7, 7, 7);
   justify-content: center;
   align-items: flex-start;
   height: 230px;
   width: 450px;
-  background-color: #725e88;
+  background-color: #9dd9f7;
   border-radius: 10%;
 }
 .notNovel {

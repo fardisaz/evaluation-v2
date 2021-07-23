@@ -40,7 +40,7 @@ export default {
   font-size: 15px;
   flex: 1;
   width: 10rem;
-  background: rgb(167, 148, 179);
+  background: #3d9eec;
   top: 1rem;
   right: 12rem;
   position: absolute;

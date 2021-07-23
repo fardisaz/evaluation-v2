@@ -82,17 +82,17 @@ export default {
   padding: 0 0;
 }
 .card-header {
-  background-color: #725e88;
+  background-color: #3d9eec;
 }
 .card-link {
-  color: #725e88;
+  color: #3d9eec;
 }
 .card-link:hover {
   color: black;
 }
 .btn {
-  background-color: #725e88;
-  border: #725e88;
+  background-color: #3d9eec;
+  border: #3d9eec;
   color: white;
 }
 .form-control {

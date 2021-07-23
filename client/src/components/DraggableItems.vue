@@ -293,8 +293,8 @@ export default {
   height: 80px;
   width: 80px;
   border-radius: 50%;
-  background: #b9829e;
-  color: #f5c9e0;
+  background: #3d9eec;
+  color: #0e0d0d;
   text-align: center;
   /* justify-content: center; */
 }
@@ -313,7 +313,6 @@ export default {
   flex: 1;
   width: 10rem;
   height: 3rem;
-  background: rgb(167, 148, 179);
   top: 1rem;
   right: 0.6rem;
   position: absolute;
@@ -325,7 +324,7 @@ export default {
   flex: 1;
   width: 12rem;
   height: 3rem;
-  background: rgb(167, 148, 179);
+ 
   top: 1rem;
   right: 12rem;
   position: absolute;

@@ -13,7 +13,7 @@ export default {
   /* border-radius: 0px; */
 }
 .alert-danger {
-  background: rgb(250, 51, 101);
+  background: rgb(245, 65, 65);
   color: #fff;
 }
 </style>
