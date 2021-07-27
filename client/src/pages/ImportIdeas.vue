@@ -48,7 +48,7 @@ export default {
   font-weight: bold;
   font-size: 15px;
   width: 10rem;
-  background: rgb(167, 148, 179);
+  background: #3d9eec;
   flex: 0;
   right: 0px;
   top: 90px;

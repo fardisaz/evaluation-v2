@@ -56,8 +56,8 @@ UserSchema.pre("save", function (next) {
     },
     description: "",
     classification: "",
-    novelAnswers: ["", "", ""],
-    notNovelAnswers: ["", "", "", ""],
+    novelAnswers: ["", ""],
+    notNovelAnswers: ["", "", ""],
     similarIdeas: [],
   });
   this.ideas.push({
@@ -68,8 +68,8 @@ UserSchema.pre("save", function (next) {
     },
     description: "",
     classification: "",
-    novelAnswers: ["", "", ""],
-    notNovelAnswers: ["", "", "", ""],
+    novelAnswers: ["", ""],
+    notNovelAnswers: ["", "", ""],
     similarIdeas: [],
   });
   this.ideas.push({
@@ -80,8 +80,8 @@ UserSchema.pre("save", function (next) {
     },
     description: "",
     classification: "",
-    novelAnswers: ["", "", ""],
-    notNovelAnswers: ["", "", "", ""],
+    novelAnswers: ["", ""],
+    notNovelAnswers: ["", "", ""],
     similarIdeas: [],
   });
   this.ideas.push({
@@ -92,8 +92,8 @@ UserSchema.pre("save", function (next) {
     },
     description: "",
     classification: "",
-    novelAnswers: ["", "", ""],
-    notNovelAnswers: ["", "", "", ""],
+    novelAnswers: ["", ""],
+    notNovelAnswers: ["", "", ""],
     similarIdeas: [],
   });
   this.ideas.push({
@@ -104,8 +104,8 @@ UserSchema.pre("save", function (next) {
     },
     description: "",
     classification: "",
-    novelAnswers: ["", "", ""],
-    notNovelAnswers: ["", "", "", ""],
+    novelAnswers: ["", ""],
+    notNovelAnswers: ["", "", ""],
     similarIdeas: [],
   });
   next();

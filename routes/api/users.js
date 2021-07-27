@@ -185,8 +185,7 @@ router.get("/countNovelty", async (req, res) => {
       if (idea.title === inputTitle) {
         if (
           !idea.novelAnswers[0] &&
-          !idea.novelAnswers[1] &&
-          !idea.novelAnswers[2]
+          !idea.novelAnswers[1]
         ) {
           newArr;
         } else {
@@ -204,8 +203,7 @@ router.get("/countNovelty", async (req, res) => {
         if (
           !idea.notNovelAnswers[0] &&
           !idea.notNovelAnswers[1] &&
-          !idea.notNovelAnswers[2] &&
-          !idea.notNovelAnswers[3]
+          !idea.notNovelAnswers[2]
         ) {
           newArr;
         } else {

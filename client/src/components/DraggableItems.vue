@@ -1,6 +1,7 @@
 <template>
   <div>
     <!-- <p>{{ ideas.data }}</p> -->
+
     <div v-for="idea in importedIdeas" :key="idea._id">
       <draggable
         class="testmove"
@@ -26,7 +27,7 @@
     <!-- Novel Ideas Dialog -->
     <base-dialog v-if="novelDialog" :title="currentIdea.title">
       <template #default>
-        <div class="questions">
+        <!-- <div class="questions">
           <span class="question">What is the limitation of other ideas?</span>
           <br />
           <textarea
@@ -34,14 +35,16 @@
             v-model="currentIdea.novelAnswers[0]"
             placeholder="add multiple lines"
           ></textarea>
-        </div>
+        </div> -->
 
         <div class="questions">
-          <span>What are the ideas included in this idea?</span>
-
+          <span
+            >What are the ideas included in this idea?(Please write the title
+            name.Example:Idea 1,Idea 2,...)</span
+          >
           <br />
           <textarea
-            v-model="currentIdea.novelAnswers[1]"
+            v-model="currentIdea.novelAnswers[0]"
             class="answerText"
             placeholder="add multiple lines"
           ></textarea>
@@ -49,10 +52,9 @@
 
         <div class="questions">
           <span>What is radically new about this idea?</span>
-
           <br />
           <textarea
-            v-model="currentIdea.novelAnswers[2]"
+            v-model="currentIdea.novelAnswers[1]"
             class="answerText"
             placeholder="add multiple lines"
           ></textarea>
@@ -92,7 +94,7 @@
             placeholder="add multiple lines"
           ></textarea>
         </div>
-        <div class="questions">
+        <!-- <div class="questions">
           <span>Can you name similar idea(s) that already exist here?</span>
           <br />
           <textarea
@@ -100,7 +102,7 @@
             class="answerText"
             placeholder="add multiple lines"
           ></textarea>
-        </div>
+        </div> -->
       </template>
       <template #actions>
         <button @click="closeAntiNovel">Okay</button>
@@ -164,7 +166,7 @@ export default {
   },
   methods: {
     ...mapActions(["fetchIdeas", "updateIdea", "compareIdeas", "countNovelty"]),
-    ...mapMutations(["UPDATE_SAVED","SET_NEW_IDEAS"]),
+    ...mapMutations(["UPDATE_SAVED", "SET_NEW_IDEAS"]),
     toggleClick(_title, _desc) {
       this.currentTitle = _title;
       this.currentDescription = _desc;
@@ -202,10 +204,18 @@ export default {
       const index = this.importedIdeas.findIndex(
         (idea) => idea._id === this.currentIdea._id
       );
+      let newNovelanswers = [];
+      let titles = this.currentIdea.novelAnswers[0].split(",");
+      titles.forEach((title) => {
+        newNovelanswers.push(
+          this.importedIdeas.find((idea) => idea.title == title).description
+        );
+      });
+      newNovelanswers.push(this.currentIdea.novelAnswers[1]);
       this.importedIdeas[index] = {
         ...this.importedIdeas[index],
-        novelAnswers: this.currentIdea.novelAnswers,
-        notNovelAnswers: ["", "", "", ""],
+        novelAnswers: newNovelanswers,
+        notNovelAnswers: ["", "", ""],
       };
     },
     closeAntiNovel() {
@@ -216,7 +226,7 @@ export default {
       this.importedIdeas[index] = {
         ...this.importedIdeas[index],
         notNovelAnswers: this.currentIdea.notNovelAnswers,
-        novelAnswers: ["", "", ""],
+        novelAnswers: ["", ""],
       };
     },
     positionCalculation(x, y, id) {
@@ -234,21 +244,21 @@ export default {
         this.importedIdeas[index] = {
           ...this.importedIdeas[index],
           classification: "Novel",
-          notNovelAnswers: ["", "", "", ""],
+          notNovelAnswers: ["", "", ""],
         };
       } else if (595 < y && y < 800 && 1000 < x && x < 1410) {
         this.antiNovelDialog = true;
         this.importedIdeas[index] = {
           ...this.importedIdeas[index],
           classification: "Not Novel",
-          novelAnswers: ["", "", ""],
+          novelAnswers: ["", ""],
         };
       } else {
         this.importedIdeas[index] = {
           ...this.importedIdeas[index],
           classification: "",
-          notNovelAnswers: ["", "", "", ""],
-          novelAnswers: ["", "", ""],
+          notNovelAnswers: ["", "", ""],
+          novelAnswers: ["", ""],
         };
       }
     },
@@ -257,14 +267,13 @@ export default {
       // For this function it's better to go to another page and do the rest of evaluation there
       console.log("Auto evaluation");
       const loads = input.split("//");
-      let arr=[]
-      loads.forEach(load=>{
-        arr.push({"description":load})
-      })
-      this.SET_NEW_IDEAS(arr)
+      let arr = [];
+      loads.forEach((load) => {
+        arr.push({ description: load });
+      });
+      this.SET_NEW_IDEAS(arr);
       this.$router.push("/automaticEvaluation");
-   
-     },
+    },
   },
   created() {
     //fetching the idea from user ideas model
@@ -277,7 +286,7 @@ export default {
         console.log(err);
       });
   },
-  computed: { ...mapGetters(["ideas", "token","newIdeas"]) },
+  computed: { ...mapGetters(["ideas", "token", "newIdeas"]) },
 };
 </script>
 
@@ -324,7 +333,7 @@ export default {
   flex: 1;
   width: 12rem;
   height: 3rem;
- 
+
   top: 1rem;
   right: 12rem;
   position: absolute;
