@@ -8,7 +8,7 @@ const state = {
   ideas: [],
   saved: false,
   error: null,
-  newIdeas:[]
+  newIdeas: [],
 };
 const getters = {
   isLoggedIn: (state) => !!state.token,
@@ -18,14 +18,14 @@ const getters = {
   saved: (state) => state.saved,
   error: (state) => state.error,
   token: (state) => state.token,
-  newIdeas:(state)=>state.newIdeas
+  newIdeas: (state) => state.newIdeas,
 };
 const actions = {
   //Login Action
   async login({ commit }, user) {
     commit("auth_request");
     try {
-      let res = await axios.post("http://localhost:5000/api/users/login", user);
+      let res = await axios.post("/api/users/login", user);
       if (res.data.success) {
         const token = res.data.token;
         const user = res.data.user;
@@ -44,10 +44,7 @@ const actions = {
   async register({ commit }, userData) {
     try {
       commit("register_request");
-      let res = await axios.post(
-        "http://localhost:5000/api/users/register",
-        userData
-      );
+      let res = await axios.post("/api/users/register", userData);
       if (res.data.success !== undefined) {
         commit("register_success");
       }
@@ -65,7 +62,7 @@ const actions = {
     return;
   },
   async fetchIdeas({ commit }) {
-    let res = await axios.get("http://localhost:5000/api/users/profile");
+    let res = await axios.get("/api/users/profile");
     const ideas = res.data.user.ideas;
     commit("SET_IDEAS", ideas);
     //return ideas;
@@ -73,29 +70,23 @@ const actions = {
   //import descriptions
   async importDescription({ commit }, ideaArray) {
     console.log("Here is the ideaArr", ideaArray);
-    let res = await axios.patch(
-      "http://localhost:5000/api/users/import",
-      ideaArray
-    );
+    let res = await axios.patch("/api/users/import", ideaArray);
     commit("SET_IDEAS", res.data);
   },
   //update ideas
   async updateIdea({ commit }, updatedIdea) {
-    let res = await axios.patch(
-      "http://localhost:5000/api/users/ideas/" + updatedIdea._id,
-      {
-        position: updatedIdea.position,
-        classification: updatedIdea.classification,
-        novelAnswers: updatedIdea.novelAnswers,
-        notNovelAnswers: updatedIdea.notNovelAnswers,
-        similarIdeas: updatedIdea.similarIdeas,
-      }
-    );
+    let res = await axios.patch("/api/users/ideas/" + updatedIdea._id, {
+      position: updatedIdea.position,
+      classification: updatedIdea.classification,
+      novelAnswers: updatedIdea.novelAnswers,
+      notNovelAnswers: updatedIdea.notNovelAnswers,
+      similarIdeas: updatedIdea.similarIdeas,
+    });
     commit("SET_IDEAS", res.data);
   },
   //compare ideas
   async compareIdeas(_, payload) {
-    let res = await axios.post("http://localhost:5000/api/users/similarity", {
+    let res = await axios.post("/api/users/similarity", {
       text1: payload.text1,
       text2: payload.text2,
     });
@@ -103,7 +94,7 @@ const actions = {
   },
   //count (not)novelty
   async countNovelty() {
-    let res = await axios.get("http://localhost:5000/api/users/countNovelty");
+    let res = await axios.get("/api/users/countNovelty");
     // console.log(res.data);
     return res.data;
   },
@@ -147,9 +138,9 @@ const mutations = {
     state.saved = saved;
   },
   //NewIdeas Mutation
-  SET_NEW_IDEAS(state,newIdeas){
-    state.newIdeas=newIdeas
-  }
+  SET_NEW_IDEAS(state, newIdeas) {
+    state.newIdeas = newIdeas;
+  },
 };
 
 export default {
