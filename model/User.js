@@ -27,6 +27,9 @@ const IdeaSchema = new Schema({
   similarIdeas: {
     type: Array,
   },
+  extractedTopic: {
+    type: String,
+  },
 });
 //Create the User Schema
 const UserSchema = new Schema({
@@ -59,6 +62,7 @@ UserSchema.pre("save", function (next) {
     novelAnswers: ["", ""],
     notNovelAnswers: ["", "", ""],
     similarIdeas: [],
+    extractedTopic: "",
   });
   this.ideas.push({
     title: "Idea 2",
@@ -71,6 +75,7 @@ UserSchema.pre("save", function (next) {
     novelAnswers: ["", ""],
     notNovelAnswers: ["", "", ""],
     similarIdeas: [],
+    extractedTopic: "",
   });
   this.ideas.push({
     title: "Idea 3",
@@ -83,6 +88,7 @@ UserSchema.pre("save", function (next) {
     novelAnswers: ["", ""],
     notNovelAnswers: ["", "", ""],
     similarIdeas: [],
+    extractedTopic: "",
   });
   this.ideas.push({
     title: "Idea 4",
@@ -95,6 +101,7 @@ UserSchema.pre("save", function (next) {
     novelAnswers: ["", ""],
     notNovelAnswers: ["", "", ""],
     similarIdeas: [],
+    extractedTopic: "",
   });
   this.ideas.push({
     title: "Idea 5",
@@ -107,6 +114,7 @@ UserSchema.pre("save", function (next) {
     novelAnswers: ["", ""],
     notNovelAnswers: ["", "", ""],
     similarIdeas: [],
+    extractedTopic: "",
   });
   next();
 });

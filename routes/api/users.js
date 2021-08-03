@@ -152,6 +152,7 @@ router.patch(
             "ideas.$.similarIdeas": req.body.similarIdeas,
             "ideas.$.position": req.body.position,
             "ideas.$.classification": req.body.classification,
+            "ideas.$.extractedTopic": req.body.extractedTopic,
           },
         },
         (error, result) => {
@@ -183,10 +184,7 @@ router.get("/countNovelty", async (req, res) => {
     let newArr = [];
     ideas.forEach((idea) => {
       if (idea.title === inputTitle) {
-        if (
-          !idea.novelAnswers[0] &&
-          !idea.novelAnswers[1]
-        ) {
+        if (!idea.novelAnswers[0] && !idea.novelAnswers[1]) {
           newArr;
         } else {
           newArr.push(idea.novelAnswers);

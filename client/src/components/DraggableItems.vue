@@ -7,6 +7,7 @@
         class="testmove"
         :id="idea._id"
         :title="idea.title"
+        :extractedTopic="idea.extractedTopic"
         :description="idea.description"
         :left="idea.position.left"
         :top="idea.position.top"
@@ -152,7 +153,7 @@ export default {
   },
   data() {
     return {
-      importedIdeas: null,
+      importedIdeas: [],
       clicked: false,
       currentTitle: null,
       currentDescription: null,
@@ -274,13 +275,49 @@ export default {
       this.SET_NEW_IDEAS(arr);
       this.$router.push("/automaticEvaluation");
     },
+    async topicExtractor(inputs) {
+      // let importArr = [];
+      for (let input of inputs) {
+        const formdata = new FormData();
+        formdata.append("key", "e56b7da7f51fdb919509b4c93e59b6bf");
+        formdata.append("txt", input.description);
+        formdata.append("lang", "en"); // 2-letter code, like en es fr ...
+        formdata.append("tt", "a"); // all topics
+        const requestOptions = {
+          method: "POST",
+          body: formdata,
+          redirect: "follow",
+        };
+        fetch("https://api.meaningcloud.com/topics-2.0", requestOptions)
+          .then((response) => ({
+            status: response.status,
+            body: response.json(),
+          }))
+          .then(async ({ status, body }) => {
+            console.log(status, body);
+            body
+              .then((newBody) => {
+                this.importedIdeas.push(
+                  Object.assign({}, JSON.parse(JSON.stringify(input)), {
+                    extractedTopic: newBody.concept_list[0].form,
+                  })
+                );
+              })
+              .catch((err) => console.log("Topic Api error: ", err));
+          })
+          .catch((error) => console.log("error", error));
+      }
+      console.log(this.importedIdeas);
+      // return importArr;
+    },
   },
   created() {
     //fetching the idea from user ideas model
     this.fetchIdeas()
       .then(() => {
         this.UPDATE_SAVED(false);
-        this.importedIdeas = this.ideas;
+        this.topicExtractor(this.ideas);
+        // this.importedIdeas = this.ideas;
       })
       .catch((err) => {
         console.log(err);

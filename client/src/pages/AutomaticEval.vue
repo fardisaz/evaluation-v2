@@ -10,7 +10,13 @@
     >
     </download>
     <!-- This is for arrow connection between ideas -->
-    <!-- <svg id="connectors" height="100%" width="100%">
+    <svg
+      id="connectors"
+      height="100%"
+      width="100%"
+      v-for="(arrow, index) in arrowArray"
+      :key="index"
+    >
       <defs>
         <marker
           id="markerArrow"
@@ -25,18 +31,18 @@
       </defs>
 
       <line
-        :x1="ideas[3].position.left"
-        :y1="ideas[3].position.top"
-        :x2="ideas[2].position.left + 45"
-        :y2="ideas[2].position.top + 45"
+        :x1="arrow.oldPosition.left"
+        :y1="arrow.oldPosition.top"
+        :x2="arrow.newPosition.left + 45"
+        :y2="arrow.newPosition.top + 45"
         class="arrow"
       />
-    </svg> -->
+    </svg>
     <div v-for="(idea, index) in importedIdea" :key="index">
       <draggable
-        class="testmove"
+        class="newIdeas"
         :id="index"
-        :title="idea.title"
+        :extractedTopic="idea.title"
         :description="idea.description"
         :left="idea.position.left"
         :top="idea.position.top"
@@ -49,7 +55,7 @@
       <draggable
         class="oldIdeas"
         :id="index"
-        :title="idea.title"
+        :extractedTopic="idea.extractedTopic"
         :description="idea.description"
         :left="idea.position.left"
         :top="idea.position.top"
@@ -88,6 +94,8 @@ export default {
       sim: [],
       currentTitle: null,
       currentDescription: null,
+      arrowArray: [],
+      newIdeasTitle: [],
     };
   },
   computed: { ...mapGetters(["ideas", "saved", "newIdeas"]) },
@@ -172,15 +180,15 @@ export default {
           title: this.finalEvaluation[index].title,
         });
       });
+
+      // Do not forget to uncomment line 166 & 167
       //  compare each new idea with old idea to get the most similar one
       for (const item of this.convertedNewIdea) {
         allSimilarity = [];
         b = [];
         for (const final of this.finalEvaluation) {
           let text1 = item.description.split(" ").join("%20") + "%20";
-          let text2 = final.descAndAnswers.split(" ").join("%20") + "%20";
-          //  console.log("This is text 1",text1);
-          //  console.log("This is text 2",text2);
+          let text2 = final.description.split(" ").join("%20") + "%20";
           let similarity = await this.compareIdeas({ text1, text2 });
           allSimilarity.push({
             similarity,
@@ -215,10 +223,13 @@ export default {
       // }
 
       //  Mock api response for testing
-      //   newArr= new Promise((resolve) => {
-      //   resolve([{oldIdea:"Idea 1",newIdea:"Idea 3",similarity:0.51},{oldIdea:"Idea 2",newIdea:"Idea 4",similarity:0.63},{oldIdea:"Idea 3",newIdea:"Idea 5",similarity:0.23},{oldIdea:"Idea 4",newIdea:"Idea 2",similarity:0.31},{oldIdea:"Idea 5",newIdea:"Idea 1",similarity:0.45}]);
-      //  })
-
+      // newArr = [
+      //   { oldIdea: "Idea 1", newIdea: "Idea 5", similarity: 0.802 },
+      //   { oldIdea: "Idea 5", newIdea: "Idea 2", similarity: 0.52 },
+      //   { oldIdea: "Idea 3", newIdea: "Idea 3", similarity: 0.69 },
+      //   { oldIdea: "Idea 4", newIdea: "Idea 4", similarity: 0.54 },
+      //   { oldIdea: "Idea 2", newIdea: "Idea 1", similarity: 0.0 },
+      // ];
       console.log("This is the new array", newArr);
       let old;
       for (const load of this.convertedNewIdea) {
@@ -261,6 +272,15 @@ export default {
         }
       }
       console.log("This is the imported Ideas", this.importedIdea);
+      for (let item of newArr) {
+        this.arrowArray.push({
+          oldPosition: this.ideas.find((idea) => item.oldIdea === idea.title)
+            .position,
+          newPosition: this.importedIdea.find((im) => item.newIdea === im.title)
+            .position,
+        });
+      }
+      console.log("This is the positions of old new ideas", this.arrowArray);
     },
 
     onStart() {
@@ -274,8 +294,8 @@ export default {
     this.fetchIdeas()
       .then(() => {
         this.onStart();
-        console.log("this is the new ideas", this.newIdeas);
-      })
+        console.log("this is the new ideas", this.newIdeas);      
+        })
       .catch((err) => {
         console.log(err);
       });
@@ -331,8 +351,25 @@ export default {
   height: 80px;
   width: 80px;
   border-radius: 50%;
-  background: #eb2751;
+  background: #3d9eec;
   color: #0e0d0d;
   text-align: center;
+}
+.newIdeas {
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* display: block; */
+  position: absolute;
+  top: 0;
+  height: 80px;
+  width: 80px;
+  border-radius: 50%;
+  background: #eb2751;
+
+  color: #0e0d0d;
+  text-align: center;
+  /* justify-content: center; */
 }
 </style>

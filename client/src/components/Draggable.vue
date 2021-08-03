@@ -5,8 +5,11 @@
       @mousedown="dragMouseDown"
       @dblclick="$emit('openDialog', title, description)"
     >
-      <p>
+      <!-- <p>
         {{ title }}
+      </p> -->
+      <p>
+        {{ extractedTopic }}
       </p>
     </div>
   </div>
@@ -22,6 +25,7 @@ export default {
     top: Number,
     id: String,
     description: String,
+    extractedTopic: String,
   },
   data: function() {
     return {
