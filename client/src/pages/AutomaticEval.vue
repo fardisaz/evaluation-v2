@@ -17,19 +17,6 @@
       v-for="(arrow, index) in arrowArray"
       :key="index"
     >
-      <defs>
-        <marker
-          id="markerArrow"
-          markerWidth="13"
-          markerHeight="13"
-          refX="2"
-          refY="6"
-          orient="auto"
-        >
-          <path d="M2,2 L2,11 L10,6 L2,2" />
-        </marker>
-      </defs>
-
       <line
         :x1="arrow.oldPosition.left"
         :y1="arrow.oldPosition.top"
@@ -249,8 +236,8 @@ export default {
               ...load,
               classification: old.classification,
               position: {
-                left: old.position.left + 60,
-                top: old.position.top + 60,
+                left: old.position.left + 40,
+                top: old.position.top + 40,
               },
             });
           } else {
@@ -273,12 +260,15 @@ export default {
       }
       console.log("This is the imported Ideas", this.importedIdea);
       for (let item of newArr) {
-        this.arrowArray.push({
-          oldPosition: this.ideas.find((idea) => item.oldIdea === idea.title)
-            .position,
-          newPosition: this.importedIdea.find((im) => item.newIdea === im.title)
-            .position,
-        });
+        if (item.similarity != 0) {
+          this.arrowArray.push({
+            oldPosition: this.ideas.find((idea) => item.oldIdea === idea.title)
+              .position,
+            newPosition: this.importedIdea.find(
+              (im) => item.newIdea === im.title
+            ).position,
+          });
+        }
       }
       console.log("This is the positions of old new ideas", this.arrowArray);
     },
@@ -294,8 +284,8 @@ export default {
     this.fetchIdeas()
       .then(() => {
         this.onStart();
-        console.log("this is the new ideas", this.newIdeas);      
-        })
+        console.log("this is the new ideas", this.newIdeas);
+      })
       .catch((err) => {
         console.log(err);
       });
@@ -315,9 +305,6 @@ export default {
   marker-end: url(#markerArrow);
 }
 
-#markerArrow {
-  fill: red;
-}
 .periodic_table {
   color: #fff !important;
   font-weight: bold;
