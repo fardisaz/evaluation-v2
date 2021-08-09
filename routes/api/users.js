@@ -64,6 +64,7 @@ router.post("/login", (req, res) => {
           _id: user._id,
           username: user.username,
           ideas: user.ideas,
+          newIdeas: user.newIdeas,
         };
         //assign a token for the user
         jwt.sign(payload, key, { expiresIn: 604800 }, (err, token) => {
@@ -309,6 +310,78 @@ router.post(
       .catch((error) => {
         console.log(error);
       });
+  }
+);
+
+/**
+ * @route PATCH api/users/importNewIdeas
+ * @desc Return the User's new ideas
+ * @access Private
+ */
+router.patch(
+  "/importNewIdeas",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    const descs = req.body.descriptions;
+    const newIdeas = req.user.newIdeas;
+
+    try {
+      newIdeas.forEach((idea, index) => {
+        User.update(
+          { "newIdeas._id": idea._id },
+          {
+            $set: {
+              "newIdeas.$.description": req.body.descriptions[index],
+            },
+          },
+          (error, result) => {
+            if (error) {
+              res.status(500).send();
+            }
+            // res.send(result);
+            console.log(result);
+          }
+        );
+      });
+      //res.send(ideas);
+      res.send(req.user.newIdeas);
+    } catch (e) {
+      res.status(500).send();
+    }
+  }
+);
+
+/**
+ * @route PATCH api/users/newIdeas/:id
+ * @desc Return the updates User's new ideas
+ * @access Private
+ */
+router.patch(
+  "/newIdeas/:id",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      User.update(
+        { "newIdeas._id": req.params.id },
+        {
+          $set: {
+            "newIdeas.$.position": req.body.position,
+            "newIdeas.$.classification": req.body.classification,
+            "newIdeas.$.extractedTopic": req.body.extractedTopic,
+          },
+        },
+        (error, result) => {
+          if (error) {
+            res.status(500).send();
+          }
+          // res.send(result);
+          console.log(result);
+        }
+      );
+      res.send(req.user.newIdeas);
+    } catch (e) {
+      res.status(500).send();
+    }
   }
 );
 module.exports = router;

@@ -67,7 +67,9 @@ const actions = {
   async fetchIdeas({ commit }) {
     let res = await axios.get("http://localhost:5000/api/users/profile");
     const ideas = res.data.user.ideas;
+    const newIdeas = res.data.user.newIdeas;
     commit("SET_IDEAS", ideas);
+    commit("SET_NEW_IDEAS", newIdeas);
     //return ideas;
   },
   //import descriptions
@@ -107,6 +109,27 @@ const actions = {
     let res = await axios.get("http://localhost:5000/api/users/countNovelty");
     // console.log(res.data);
     return res.data;
+  },
+  //import  new ideas descriptions
+  async importNewDescription({ commit }, ideaArray) {
+    let res = await axios.patch(
+      "http://localhost:5000/api/users/importNewIdeas",
+      ideaArray
+    );
+
+    commit("SET_NEW_IDEAS", res.data);
+  },
+  //update new ideas
+  async updateNewIdea({ commit }, updatedIdea) {
+    let res = await axios.patch(
+      "http://localhost:5000/api/users/newIdeas/" + updatedIdea._id,
+      {
+        position: updatedIdea.position,
+        classification: updatedIdea.classification,
+        extractedTopic: updatedIdea.extractedTopic,
+      }
+    );
+    commit("SET_NEW_IDEAS", res.data);
   },
 };
 const mutations = {

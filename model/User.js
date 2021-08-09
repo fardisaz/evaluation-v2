@@ -20,9 +20,11 @@ const IdeaSchema = new Schema({
   },
   novelAnswers: {
     type: Array,
+    required: false,
   },
   notNovelAnswers: {
     type: Array,
+    required: false,
   },
   similarIdeas: {
     type: Array,
@@ -31,6 +33,7 @@ const IdeaSchema = new Schema({
     type: String,
   },
 });
+
 //Create the User Schema
 const UserSchema = new Schema({
   username: {
@@ -46,11 +49,13 @@ const UserSchema = new Schema({
     default: Date.now,
   },
   ideas: [IdeaSchema],
+  newIdeas: [IdeaSchema],
 });
 
 UserSchema.pre("save", function (next) {
   //put "if" statement here in case needed
   this.ideas = [];
+  this.newIdeas = [];
   this.ideas.push({
     title: "Idea 1",
     position: {
@@ -114,6 +119,56 @@ UserSchema.pre("save", function (next) {
     novelAnswers: ["", ""],
     notNovelAnswers: ["", "", ""],
     similarIdeas: [],
+    extractedTopic: "",
+  });
+  this.newIdeas.push({
+    title: "Idea 1",
+    position: {
+      left: 0,
+      top: 0,
+    },
+    description: "",
+    classification: "",
+    extractedTopic: "",
+  });
+  this.newIdeas.push({
+    title: "Idea 2",
+    position: {
+      left: 0,
+      top: 0,
+    },
+    description: "",
+    classification: "",
+    extractedTopic: "",
+  });
+  this.newIdeas.push({
+    title: "Idea 3",
+    position: {
+      left: 0,
+      top: 0,
+    },
+    description: "",
+    classification: "",
+    extractedTopic: "",
+  });
+  this.newIdeas.push({
+    title: "Idea 4",
+    position: {
+      left: 0,
+      top: 0,
+    },
+    description: "",
+    classification: "",
+    extractedTopic: "",
+  });
+  this.newIdeas.push({
+    title: "Idea 5",
+    position: {
+      left: 0,
+      top: 0,
+    },
+    description: "",
+    classification: "",
     extractedTopic: "",
   });
   next();

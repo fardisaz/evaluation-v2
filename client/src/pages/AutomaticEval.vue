@@ -20,8 +20,8 @@
       <line
         :x1="arrow.oldPosition.left"
         :y1="arrow.oldPosition.top"
-        :x2="arrow.newPosition.left + 45"
-        :y2="arrow.newPosition.top + 45"
+        :x2="arrow.newPosition.left + 39"
+        :y2="arrow.newPosition.top + 40"
         class="arrow"
       />
     </svg>
@@ -29,7 +29,8 @@
       <draggable
         class="newIdeas"
         :id="index"
-        :extractedTopic="idea.title"
+        :title="idea.title"
+        :extractedTopic="idea.extractedTopic"
         :description="idea.description"
         :left="idea.position.left"
         :top="idea.position.top"
@@ -42,6 +43,7 @@
       <draggable
         class="oldIdeas"
         :id="index"
+        :title="idea.title"
         :extractedTopic="idea.extractedTopic"
         :description="idea.description"
         :left="idea.position.left"
@@ -83,11 +85,17 @@ export default {
       currentDescription: null,
       arrowArray: [],
       newIdeasTitle: [],
+      newImportedIdeas: [],
     };
   },
   computed: { ...mapGetters(["ideas", "saved", "newIdeas"]) },
   methods: {
-    ...mapActions(["fetchIdeas", "compareIdeas", "countNovelty"]),
+    ...mapActions([
+      "fetchIdeas",
+      "compareIdeas",
+      "countNovelty",
+      "updateNewIdea",
+    ]),
     ...mapMutations(["UPDATE_SAVED", "SET_NEW_IDEAS"]),
     randomIntFromInterval(min, max) {
       // min and max included
@@ -100,6 +108,22 @@ export default {
     },
     closeDialog() {
       this.clicked = false;
+    },
+    onNewIdeaUpdate(change) {
+      this.updateNewIdea(change)
+        .then(() => {
+          this.fetchIdeas()
+            .then(() => {})
+            .catch((err) => {
+              console.log("Error in fetching the user's ideas ", err);
+            });
+        })
+        .catch((err) => {
+          console.log(
+            "Error has happened regarding the update new idea function",
+            err
+          );
+        });
     },
     async finalEvalMethod() {
       let totalEval = await this.countNovelty();
@@ -161,13 +185,11 @@ export default {
       let allSimilarity = [];
       let b = [];
       let newArr = [];
-      this.newIdeas.forEach(async (item, index) => {
+      this.newIdeas.forEach(async (item) => {
         this.convertedNewIdea.push({
           ...item,
-          title: this.finalEvaluation[index].title,
         });
       });
-
       // Do not forget to uncomment line 166 & 167
       //  compare each new idea with old idea to get the most similar one
       for (const item of this.convertedNewIdea) {
@@ -279,12 +301,90 @@ export default {
         this.sim = await this.similarityMethod();
       });
     },
+    topicExtractor() {
+      // let importArr = [];
+
+      this.newIdeas.forEach((i) => {
+        const formdata = new FormData();
+        formdata.append("key", "e56b7da7f51fdb919509b4c93e59b6bf");
+        formdata.append("txt", i.description);
+        formdata.append("lang", "en"); // 2-letter code, like en es fr ...
+        formdata.append("tt", "a"); // all topics
+        const requestOptions = {
+          method: "POST",
+          body: formdata,
+          redirect: "follow",
+        };
+        fetch("https://api.meaningcloud.com/topics-2.0", requestOptions)
+          .then((response) => ({
+            status: response.status,
+            body: response.json(),
+          }))
+          .then(async ({ status, body }) => {
+            console.log(status, body);
+            body
+              .then((newBody) => {
+                if (newBody.concept_list.length > 0) {
+                  let item = Object.assign(
+                    {},
+                    { ...i },
+                    { extractedTopic: newBody.concept_list[0].form }
+                  );
+                  this.updateNewIdea(item)
+                    .then(() => {
+                      this.fetchIdeas()
+                        .then(() => {})
+                        .catch((err) => {
+                          console.log(
+                            "Error in fetching the user's ideas ",
+                            err
+                          );
+                        });
+                    })
+                    .catch((err) => {
+                      console.log(
+                        "Error has happened regarding the update function",
+                        err
+                      );
+                    });
+                  console.log(item);
+                } else {
+                  let item = Object.assign(
+                    {},
+                    { ...i },
+                    { extractedTopic: "no title" }
+                  );
+                  this.updateNewIdea(item)
+                    .then(() => {
+                      this.fetchIdeas()
+                        .then(() => {})
+                        .catch((err) => {
+                          console.log(
+                            "Error in fetching the user's ideas ",
+                            err
+                          );
+                        });
+                    })
+                    .catch((err) => {
+                      console.log(
+                        "Error has happened regarding the update function",
+                        err
+                      );
+                    });
+                }
+              })
+              .catch((err) => console.log("Topic Api error: ", err));
+          })
+          .catch((error) => console.log("error", error));
+      });
+    },
   },
   created() {
     this.fetchIdeas()
       .then(() => {
+        // this.onStart();
+        this.topicExtractor();
         this.onStart();
-        console.log("this is the new ideas", this.newIdeas);
       })
       .catch((err) => {
         console.log(err);
