@@ -8,9 +8,16 @@
       <!-- <p>
         {{ title }}
       </p> -->
-      <p>
+      <!-- <p>
         {{ extractedTopic }}
-      </p>
+      </p> -->
+      <img
+        :src="picture"
+        style="height: 60px;
+  width: 60px;
+  border-radius: 50%;"
+        alt="no image"
+      />
     </div>
   </div>
 </template>
@@ -35,6 +42,7 @@ export default {
         movementX: 0,
         movementY: 0,
       },
+      picture: "",
     };
   },
   computed: {},
@@ -82,9 +90,40 @@ export default {
       // d.style.top = 50 + "px";
       //console.log(boxABB);
     },
+    async wiki(topic) {
+      var url = "https://en.wikipedia.org/w/api.php";
+
+      var params = {
+        action: "query",
+        format: "json",
+        list: "allimages",
+        aifrom: topic,
+        ailimit: "3",
+      };
+
+      url = url + "?origin=*";
+      Object.keys(params).forEach(function(key) {
+        url += "&" + key + "=" + params[key];
+      });
+
+      this.picture = await fetch(url)
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(response) {
+          var images = response.query.allimages;
+          // console.log(images[1].url);
+          return images[1].url;
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
   },
   mounted() {
     this.calcPosOfBox();
+    console.log("This is the extractedTopic", this.extractedTopic);
+    this.wiki(this.extractedTopic);
   },
 };
 </script>

@@ -170,7 +170,8 @@ export default {
       "fetchIdeas",
       "updateIdea",
       "compareIdeas",
-      "countNovelty"
+      "countNovelty",
+      "importNewDescription",
     ]),
     ...mapMutations(["UPDATE_SAVED", "SET_NEW_IDEAS"]),
     toggleClick(_title, _desc) {
@@ -211,12 +212,16 @@ export default {
         (idea) => idea._id === this.currentIdea._id
       );
       let newNovelanswers = [];
-      let titles = this.currentIdea.novelAnswers[0].split(",");
-      titles.forEach((title) => {
-        newNovelanswers.push(
-          this.importedIdeas.find((idea) => idea.title == title).description
-        );
-      });
+      if (this.currentIdea.novelAnswers[0].toUpperCase().includes("IDEA")) {
+        let titles = this.currentIdea.novelAnswers[0].split(",");
+        titles.forEach((title) => {
+          newNovelanswers.push(
+            this.importedIdeas.find((idea) => idea.title == title).description
+          );
+        });
+      } else if (this.currentIdea.novelAnswers[0]) {
+        newNovelanswers.push(this.currentIdea.novelAnswers[0]);
+      }
       newNovelanswers.push(this.currentIdea.novelAnswers[1]);
       this.importedIdeas[index] = {
         ...this.importedIdeas[index],
@@ -289,11 +294,8 @@ export default {
           console.log("Error in importing the new descriptions ", err);
         });
     },
-        
-    },
-    async topicExtractor(inputs, newArr) {
-      // let importArr = [];
-      for (let input of inputs) {
+    async topicExtractor() {
+      for (let input of this.ideas) {
         const formdata = new FormData();
         formdata.append("key", "e56b7da7f51fdb919509b4c93e59b6bf");
         formdata.append("txt", input.description);
@@ -314,13 +316,13 @@ export default {
             body
               .then((newBody) => {
                 if (newBody.concept_list.length > 0) {
-                  newArr.push(
+                  this.importedIdeas.push(
                     Object.assign({}, JSON.parse(JSON.stringify(input)), {
                       extractedTopic: newBody.concept_list[0].form,
                     })
                   );
                 } else {
-                  newArr.push(
+                  this.importedIdeas.push(
                     Object.assign({}, JSON.parse(JSON.stringify(input)), {
                       extractedTopic: "no title",
                     })
@@ -330,17 +332,22 @@ export default {
               .catch((err) => console.log("Topic Api error: ", err));
           })
           .catch((error) => console.log("error", error));
-      
-      console.log(newArr);
-      // return importArr;
-    }
+
+        //   console.log(newArr);
+        //   // return importArr;
+      }
+    },
   },
+
   created() {
     //fetching the idea from user ideas model
     this.fetchIdeas()
       .then(() => {
         this.UPDATE_SAVED(false);
-        this.topicExtractor(this.ideas, this.importedIdeas);
+        this.topicExtractor().then(() => {
+          console.log("This is the imported", this.importedIdeas);
+        });
+
         // this.importedIdeas = this.ideas;
       })
       .catch((err) => {

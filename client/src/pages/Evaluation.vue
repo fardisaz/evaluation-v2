@@ -22,7 +22,9 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   components: { Download, DraggableItems, FilterLayout },
   computed: { ...mapGetters(["ideas", "saved"]) },
-  methods: { ...mapActions(["fetchIdeas"]) },
+  methods: {
+    ...mapActions(["fetchIdeas"]),
+  },
   created() {
     this.fetchIdeas()
       .then(() => {})
