@@ -71,8 +71,15 @@ import Draggable from "../components/Draggable.vue";
 import BaseDialog from "../components/BaseDialog.vue";
 import FilterLayout from "../components/layouts/FilterLayout.vue";
 import { mapGetters, mapActions, mapMutations } from "vuex";
+// import DraggableWithLine from "../components/DraggableWithLine.vue";
 export default {
-  components: { Download, FilterLayout, Draggable, BaseDialog },
+  components: {
+    Download,
+    FilterLayout,
+    Draggable,
+    BaseDialog,
+    // DraggableWithLine,
+  },
   data() {
     return {
       importedNewIdeas: null,
@@ -86,6 +93,8 @@ export default {
       arrowArray: [],
       newIdeasTitle: [],
       newImportedIdeas: [],
+      refreshPage: false,
+      initial: 0,
     };
   },
   computed: { ...mapGetters(["ideas", "saved", "newIdeas"]) },
@@ -377,18 +386,36 @@ export default {
           })
           .catch((error) => console.log("error", error));
       });
+
+      // this.onStart();
     },
   },
   created() {
+    console.log("This is the new ideas: ", this.newIdeas);
+    this.topicExtractor();
     this.fetchIdeas()
       .then(() => {
+        // this.topicExtractor();
         // this.onStart();
-        this.topicExtractor();
-        this.onStart();
       })
       .catch((err) => {
         console.log(err);
       });
+  },
+  updated() {
+    this.initial++;
+
+    if (this.initial == 5) {
+      console.log("This is the new ideas from update: ", this.newIdeas);
+      this.fetchIdeas()
+        .then(() => {
+          // this.topicExtractor();
+          this.onStart();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   },
 };
 </script>

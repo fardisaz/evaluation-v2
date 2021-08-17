@@ -92,6 +92,7 @@ const actions = {
         notNovelAnswers: updatedIdea.notNovelAnswers,
         similarIdeas: updatedIdea.similarIdeas,
         extractedTopic: updatedIdea.extractedTopic,
+        extractedUrl: updatedIdea.extractedUrl,
       }
     );
     commit("SET_IDEAS", res.data);
@@ -127,6 +128,7 @@ const actions = {
         position: updatedIdea.position,
         classification: updatedIdea.classification,
         extractedTopic: updatedIdea.extractedTopic,
+        extractedUrl: updatedIdea.extractedUrl,
       }
     );
     commit("SET_NEW_IDEAS", res.data);

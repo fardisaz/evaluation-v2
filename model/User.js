@@ -32,6 +32,9 @@ const IdeaSchema = new Schema({
   extractedTopic: {
     type: String,
   },
+  extractedUrl:{
+    type: String,
+  }
 });
 
 //Create the User Schema
@@ -68,6 +71,7 @@ UserSchema.pre("save", function (next) {
     notNovelAnswers: ["", "", ""],
     similarIdeas: [],
     extractedTopic: "",
+    extractedUrl:""
   });
   this.ideas.push({
     title: "Idea 2",
@@ -81,6 +85,7 @@ UserSchema.pre("save", function (next) {
     notNovelAnswers: ["", "", ""],
     similarIdeas: [],
     extractedTopic: "",
+    extractedUrl:""
   });
   this.ideas.push({
     title: "Idea 3",
@@ -94,6 +99,7 @@ UserSchema.pre("save", function (next) {
     notNovelAnswers: ["", "", ""],
     similarIdeas: [],
     extractedTopic: "",
+    extractedUrl:""
   });
   this.ideas.push({
     title: "Idea 4",
@@ -107,6 +113,7 @@ UserSchema.pre("save", function (next) {
     notNovelAnswers: ["", "", ""],
     similarIdeas: [],
     extractedTopic: "",
+    extractedUrl:""
   });
   this.ideas.push({
     title: "Idea 5",
@@ -120,6 +127,7 @@ UserSchema.pre("save", function (next) {
     notNovelAnswers: ["", "", ""],
     similarIdeas: [],
     extractedTopic: "",
+    extractedUrl:""
   });
   this.newIdeas.push({
     title: "Idea 1",
@@ -130,6 +138,7 @@ UserSchema.pre("save", function (next) {
     description: "",
     classification: "",
     extractedTopic: "",
+    extractedUrl:""
   });
   this.newIdeas.push({
     title: "Idea 2",
@@ -140,6 +149,7 @@ UserSchema.pre("save", function (next) {
     description: "",
     classification: "",
     extractedTopic: "",
+    extractedUrl:""
   });
   this.newIdeas.push({
     title: "Idea 3",
@@ -150,6 +160,7 @@ UserSchema.pre("save", function (next) {
     description: "",
     classification: "",
     extractedTopic: "",
+    extractedUrl:""
   });
   this.newIdeas.push({
     title: "Idea 4",
@@ -160,6 +171,7 @@ UserSchema.pre("save", function (next) {
     description: "",
     classification: "",
     extractedTopic: "",
+    extractedUrl:""
   });
   this.newIdeas.push({
     title: "Idea 5",
@@ -170,6 +182,7 @@ UserSchema.pre("save", function (next) {
     description: "",
     classification: "",
     extractedTopic: "",
+    extractedUrl:""
   });
   next();
 });

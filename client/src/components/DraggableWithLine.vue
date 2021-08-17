@@ -6,21 +6,29 @@
       @dblclick="$emit('openDialog', title, description)"
     >
       <!-- <p>
+        {{ title }}
+      </p> -->
+      <!-- <p>
         {{ extractedTopic }}
       </p> -->
-      <div>
-        <img
-          :src="picture"
-          style="height: 60px;
+      <!-- <svg id="connectors" height="100%" width="100%">
+        <line x1="183" y1="686" x2="337" y2="147" class="arrow" />
+      </svg> -->
+      <svg width="300" height="100">
+        <path
+          d="M30,150 L100,50"
+          style="stroke:red; stroke-width: 1.25px; fill: none;
+                 marker-end: url(#arrow);"
+        />
+      </svg>
+      <!-- <p>{{ arrow }}</p> -->
+      <img
+        :src="picture"
+        style="height: 60px;
   width: 60px;
   border-radius: 50%;"
-          alt="no image"
-        />
-      </div>
-
-      <p class="title">
-        {{ extractedTopic }}
-      </p>
+        alt="no image"
+      />
     </div>
   </div>
 </template>
@@ -36,7 +44,7 @@ export default {
     id: String,
     description: String,
     extractedTopic: String,
-    item: Boolean,
+    arrow: String,
   },
   data: function() {
     return {
@@ -133,6 +141,16 @@ export default {
 </script>
 
 <style scoped>
+#connectors {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.arrow {
+  stroke: red;
+  stroke-width: 2;
+  marker-end: url(#markerArrow);
+}
 .questions {
   display: flex;
 }
@@ -144,40 +162,5 @@ export default {
 }
 #draggable-header {
   z-index: 10;
-}
-.title {
-  padding-top: 4rem;
-  font-size: 20px;
-  margin-left: auto;
-}
-.myImage {
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  /* display: block; */
-  position: absolute;
-  top: 0;
-  height: 80px;
-  width: 80px;
-  border-radius: 50%;
-  background: #3d9eec;
-  color: #0e0d0d;
-  text-align: center;
-}
-.secondImage {
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  /* display: block; */
-  position: absolute;
-  top: 0;
-  height: 80px;
-  width: 80px;
-  border-radius: 50%;
-  background: #eb2751;
-  color: #0e0d0d;
-  text-align: center;
 }
 </style>
