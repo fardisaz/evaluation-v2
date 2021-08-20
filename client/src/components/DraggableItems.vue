@@ -367,10 +367,10 @@ export default {
   /* display: block; */
   position: absolute;
   top: 0;
-  height: 80px;
-  width: 80px;
+  height: 160px;
+  width: 160px;
   border-radius: 50%;
-  background: #3d9eec;
+  /* background: #3d9eec; */
   color: #0e0d0d;
   text-align: center;
   /* justify-content: center; */

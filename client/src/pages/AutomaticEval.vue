@@ -1,6 +1,23 @@
 <template>
   <div>
     <filter-layout></filter-layout>
+    <!-- Color reference -->
+    <div class="signPosition">
+      <div
+        style="display: inline-flex;
+  margin-right:1.5em;"
+      >
+        <div class="newSign"></div>
+        <p>New Ideas</p>
+      </div>
+      <div
+        style="display: inline-flex;
+  margin-right:1.5em;"
+      >
+        <div class="oldSign"></div>
+        <p>Old I deas</p>
+      </div>
+    </div>
     <download
       :download-data="ideas"
       file-type="json"
@@ -18,16 +35,16 @@
       :key="index"
     >
       <line
-        :x1="arrow.oldPosition.left"
-        :y1="arrow.oldPosition.top"
-        :x2="arrow.newPosition.left + 39"
-        :y2="arrow.newPosition.top + 40"
+        :x1="arrow.oldPosition.left + 30"
+        :y1="arrow.oldPosition.top - 20"
+        :x2="arrow.newPosition.left + 50"
+        :y2="arrow.newPosition.top + 10"
         class="arrow"
       />
     </svg>
     <div v-for="(idea, index) in importedIdea" :key="index">
-      <draggable
-        class="newIdeas"
+      <new-draggable
+        class="oldIdeas"
         :id="index"
         :title="idea.title"
         :extractedTopic="idea.extractedTopic"
@@ -37,7 +54,7 @@
         @openDialog="toggleClick"
         @posCalc="positionCalculation"
       >
-      </draggable>
+      </new-draggable>
     </div>
     <div v-for="(idea, index) in ideas" :key="index">
       <draggable
@@ -71,6 +88,7 @@ import Draggable from "../components/Draggable.vue";
 import BaseDialog from "../components/BaseDialog.vue";
 import FilterLayout from "../components/layouts/FilterLayout.vue";
 import { mapGetters, mapActions, mapMutations } from "vuex";
+import NewDraggable from "../components/NewDraggable.vue";
 // import DraggableWithLine from "../components/DraggableWithLine.vue";
 export default {
   components: {
@@ -78,7 +96,7 @@ export default {
     FilterLayout,
     Draggable,
     BaseDialog,
-    // DraggableWithLine,
+    NewDraggable,
   },
   data() {
     return {
@@ -409,7 +427,6 @@ export default {
       console.log("This is the new ideas from update: ", this.newIdeas);
       this.fetchIdeas()
         .then(() => {
-          // this.topicExtractor();
           this.onStart();
         })
         .catch((err) => {
@@ -431,7 +448,21 @@ export default {
   stroke-width: 2;
   marker-end: url(#markerArrow);
 }
-
+.signPosition {
+  top: 4.5rem;
+  flex: 1;
+  position: absolute;
+}
+.newSign {
+  height: 20px;
+  width: 20px;
+  background: #eb2751;
+}
+.oldSign {
+  height: 20px;
+  width: 20px;
+  background: #3d9eec;
+}
 .periodic_table {
   color: #fff !important;
   font-weight: bold;
@@ -460,14 +491,16 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  /* display: block; */
   position: absolute;
   top: 0;
-  height: 80px;
-  width: 80px;
+  height: 140px;
+  width: 140px;
   border-radius: 50%;
-  background: #3d9eec;
+  /* background: #3d9eec; */
   color: #0e0d0d;
   text-align: center;
+  /* justify-content: center; */
 }
 .newIdeas {
   cursor: pointer;

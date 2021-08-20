@@ -161,7 +161,7 @@ export default {
   height: 80px;
   width: 80px;
   border-radius: 50%;
-  background: #3d9eec;
+  background: #eb2751;
   color: #0e0d0d;
   text-align: center;
 }
