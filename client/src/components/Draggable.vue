@@ -126,7 +126,7 @@ export default {
   },
   mounted() {
     this.calcPosOfBox();
-    console.log("This is the extractedTopic", this.extractedTopic);
+    // console.log("This is the extractedTopic", this.extractedTopic);
     this.wiki(this.extractedTopic);
   },
 };

@@ -15,7 +15,7 @@
   margin-right:1.5em;"
       >
         <div class="oldSign"></div>
-        <p>Old I deas</p>
+        <p>Old Ideas</p>
       </div>
     </div>
     <download
@@ -219,32 +219,12 @@ export default {
       });
       // Do not forget to uncomment line 166 & 167
       //  compare each new idea with old idea to get the most similar one
-      for (const item of this.convertedNewIdea) {
-        allSimilarity = [];
-        b = [];
-        for (const final of this.finalEvaluation) {
-          let text1 = item.description.split(" ").join("%20") + "%20";
-          let text2 = final.description.split(" ").join("%20") + "%20";
-          let similarity = await this.compareIdeas({ text1, text2 });
-          allSimilarity.push({
-            similarity,
-            oldIdea: final.title,
-            newIdea: item.title,
-          });
-          b.push(similarity);
-        }
-        newArr.push(allSimilarity.find((a) => a.similarity == Math.max(...b)));
-      }
-
-      //Here is for test
-
-      // const items = [this.convertedNewIdea[3], this.convertedNewIdea[4]];
-      // for (const item of items) {
-      //   b = [];
+      // for (const item of this.convertedNewIdea) {
       //   allSimilarity = [];
+      //   b = [];
       //   for (const final of this.finalEvaluation) {
       //     let text1 = item.description.split(" ").join("%20") + "%20";
-      //     let text2 = final.descAndAnswers.split(" ").join("%20") + "%20";
+      //     let text2 = final.description.split(" ").join("%20") + "%20";
       //     let similarity = await this.compareIdeas({ text1, text2 });
       //     allSimilarity.push({
       //       similarity,
@@ -253,10 +233,30 @@ export default {
       //     });
       //     b.push(similarity);
       //   }
-      //   console.log("This is all similarity", allSimilarity);
-      //   console.log("This is b", b);
       //   newArr.push(allSimilarity.find((a) => a.similarity == Math.max(...b)));
       // }
+
+      //Here is for test
+
+      const items = [this.convertedNewIdea[3], this.convertedNewIdea[4]];
+      for (const item of items) {
+        b = [];
+        allSimilarity = [];
+        for (const final of this.finalEvaluation) {
+          let text1 = item.description.split(" ").join("%20") + "%20";
+          let text2 = final.descAndAnswers.split(" ").join("%20") + "%20";
+          let similarity = await this.compareIdeas({ text1, text2 });
+          allSimilarity.push({
+            similarity,
+            oldIdea: final.title,
+            newIdea: item.title,
+          });
+          b.push(similarity);
+        }
+        console.log("This is all similarity", allSimilarity);
+        console.log("This is b", b);
+        newArr.push(allSimilarity.find((a) => a.similarity == Math.max(...b)));
+      }
 
       //  Mock api response for testing
       // newArr = [
@@ -449,18 +449,21 @@ export default {
   marker-end: url(#markerArrow);
 }
 .signPosition {
-  top: 4.5rem;
+  top: 2rem;
+  left: 38rem;
   flex: 1;
   position: absolute;
 }
 .newSign {
   height: 20px;
   width: 20px;
+  margin-right: 2px;
   background: #eb2751;
 }
 .oldSign {
   height: 20px;
   width: 20px;
+  margin-right: 2px;
   background: #3d9eec;
 }
 .periodic_table {
