@@ -42,26 +42,44 @@ export default {
           return res.json();
         })
         .then(function(data) {
-          console.log("This is the data: ", data[0].extractions);
+          console.log(
+            "This is the data from monkeylearn: ",
+            data[0].extractions
+          );
         });
     },
     dbpedia() {
       var url = "http://dbpedia.org/sparql";
+      let input = JSON.stringify("Elon Musk");
       var query =
         "" +
         "prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#>\n" +
         "PREFIX dbo:     <http://dbpedia.org/ontology/>" +
         "\n" +
-        "select distinct ?resource ?abstract ?birthName where {\n" +
-        "  ?resource rdfs:label 'Elon Musk'@en.\n" +
-        "  ?resource dbo:abstract ?abstract.\n" +
-        "  ?resource dbo:birthName ?birthName.\n" +
-        "  FILTER (lang(?abstract) = 'en')}";
+        "select distinct ?label ?comment ?type where {\n" +
+        `  ?resource rdfs:label ${input}@en.\n` +
+        "  ?resource rdfs:comment ?comment.\n" +
+        "  ?resource rdfs:label ?label.\n" +
+        "  ?resource rdf:type ?type.\n" +
+        " FILTER (lang(?label) = 'en')" +
+        "  FILTER (lang(?comment) = 'en')}";
 
-      console.log("query: ", query);
+      // console.log("query: ", query);
       var queryUrl =
         url + "?query=" + encodeURIComponent(query) + "&format=json";
-      console.log("This is queryUrl: ", queryUrl);
+      console.log("This is the queryUrl for dbpedia: ", queryUrl);
+      return queryUrl;
+    },
+    async getApi(url) {
+      // Storing response
+      const response = await fetch(url);
+
+      // Storing data in form of JSON
+      var data = await response.json();
+      console.log("This is the data from dbpedia: ", data);
+      // if (response) {
+
+      // }
     },
   },
   created() {
@@ -74,7 +92,8 @@ export default {
 
     this.extractKey();
     // In the following function, we use dbpedia sparql query
-    this.dbpedia();
+    let url = this.dbpedia();
+    this.getApi(url);
   },
 };
 </script>

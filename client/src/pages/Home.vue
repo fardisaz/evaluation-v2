@@ -20,8 +20,8 @@
         - At the end you can save your evaluation and get an export of your
         evaluation.
       </p>
-      <router-link v-if="isLoggedIn" class="card-link" to="/import"
-        >Go to Import</router-link
+      <router-link v-if="isLoggedIn" class="card-link" to="/evaluation"
+        >Go to Evaluation</router-link
       >
     </div>
   </div>
