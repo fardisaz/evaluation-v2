@@ -24,11 +24,9 @@ export default {
   computed: { ...mapGetters(["ideas", "saved"]) },
   methods: {
     ...mapActions(["fetchIdeas"]),
-    extractKey() {
+    extractKey(input) {
       let item = {
-        data: [
-          "Elon Musk has shared a photo of the spacesuit designed by SpaceX. This is the second image shared of the new design and the first to feature the spacesuit’s full-body look.",
-        ],
+        data: [input],
       };
       fetch("https://api.monkeylearn.com/v3/extractors/ex_YCya9nrn/extract/", {
         body: JSON.stringify(item),
@@ -89,8 +87,9 @@ export default {
         console.log(err);
       });
     // In the following function we use monkeylearn
-
-    this.extractKey();
+    // let input = "Play an instrument.";
+    // let input = "It is interactive";
+    // this.extractKey(input);
     // In the following function, we use dbpedia sparql query
     let url = this.dbpedia();
     this.getApi(url);

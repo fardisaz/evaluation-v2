@@ -89,7 +89,6 @@ import BaseDialog from "../components/BaseDialog.vue";
 import FilterLayout from "../components/layouts/FilterLayout.vue";
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import NewDraggable from "../components/NewDraggable.vue";
-// import DraggableWithLine from "../components/DraggableWithLine.vue";
 export default {
   components: {
     Download,
@@ -152,9 +151,53 @@ export default {
           );
         });
     },
+    extractKey(input) {
+      let exKey;
+      let item = {
+        data: [input],
+      };
+      return fetch(
+        "https://api.monkeylearn.com/v3/extractors/ex_YCya9nrn/extract/",
+        {
+          body: JSON.stringify(item),
+          headers: {
+            Authorization: "Token e2bf65ca6d8f2e4885acc53df3589605e1bf5dda",
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+        }
+      )
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          if (data.length > 0 && data[0] && data[0].extractions.length > 0) {
+            // console.log("This is the data:", data[0]);
+            exKey = data[0].extractions[0].parsed_value;
+          } else {
+            exKey = "";
+          }
+          return exKey;
+          // console.log("This is the data from monkeylearn: ", exKey);
+        });
+    },
+    async answerKeys(items) {
+      let newItems = [...new Set(items)];
+      let exKeys = [];
+      for (let item of newItems) {
+        if (item) {
+          let ex = await this.extractKey(item);
+          if (ex) {
+            exKeys.push(ex);
+          }
+        }
+      }
+      return exKeys;
+    },
     async finalEvalMethod() {
       let totalEval = await this.countNovelty();
-      totalEval.arr.forEach((item) => {
+
+      for (let item of totalEval.arr) {
         if (
           item.Novel > item.NotNovel &&
           (totalEval.total == item.Novel + item.NotNovel ||
@@ -162,12 +205,15 @@ export default {
         ) {
           let desc = this.ideas.find((idea) => idea.title == item.title)
             .description;
+          let newDesc = await this.extractKey(desc);
+          let exKeys = await this.answerKeys(item.NovelAnswers);
+          let descArr = new Array(newDesc);
           this.finalEvaluation.push({
             classification: "Novel",
             title: item.title,
-            novelAnswers: item.NovelAnswers.join(" "),
-            description: desc,
-            descAndAnswers: desc + [...new Set(item.NovelAnswers)].join(" "),
+            novelAnswers: exKeys,
+            description: newDesc,
+            descAndAnswers: [...new Set(descArr.concat(exKeys))],
             position: {
               left: this.randomIntFromInterval(42, 450),
               top: this.randomIntFromInterval(104, 335),
@@ -180,11 +226,13 @@ export default {
         ) {
           let desc = this.ideas.find((idea) => idea.title == item.title)
             .description;
+          let newDesc = await this.extractKey(desc);
+          // let exKeys = await this.answerKeys(item.NotNovelAnswers);
           this.finalEvaluation.push({
             classification: "Not Novel",
             title: item.title,
-            notNovelAnswers: item.NotNovelAnswers.join(" "),
-            description: desc,
+            notNovelAnswers: item.NotNovelAnswers,
+            description: newDesc,
             descAndAnswers: desc + [...new Set(item.NotNovelAnswers)].join(" "),
             position: {
               left: this.randomIntFromInterval(1000, 1410),
@@ -194,10 +242,11 @@ export default {
         } else {
           let desc = this.ideas.find((idea) => idea.title == item.title)
             .description;
+          let newDesc = await this.extractKey(desc);
           this.finalEvaluation.push({
             classification: "",
             title: item.title,
-            description: desc,
+            description: newDesc,
             descAndAnswers: desc,
             position: {
               left: this.randomIntFromInterval(455, 995),
@@ -205,8 +254,8 @@ export default {
             },
           });
         }
-      });
-      console.log("This is the final evaluation", this.finalEvaluation);
+      }
+      console.log("This is the finalEvaluation: ", this.finalEvaluation);
     },
     async similarityMethod() {
       let allSimilarity = [];
@@ -219,32 +268,12 @@ export default {
       });
       // Do not forget to uncomment line 166 & 167
       //  compare each new idea with old idea to get the most similar one
-      // for (const item of this.convertedNewIdea) {
-      //   allSimilarity = [];
-      //   b = [];
-      //   for (const final of this.finalEvaluation) {
-      //     let text1 = item.description.split(" ").join("%20") + "%20";
-      //     let text2 = final.description.split(" ").join("%20") + "%20";
-      //     let similarity = await this.compareIdeas({ text1, text2 });
-      //     allSimilarity.push({
-      //       similarity,
-      //       oldIdea: final.title,
-      //       newIdea: item.title,
-      //     });
-      //     b.push(similarity);
-      //   }
-      //   newArr.push(allSimilarity.find((a) => a.similarity == Math.max(...b)));
-      // }
-
-      //Here is for test
-
-      const items = [this.convertedNewIdea[3], this.convertedNewIdea[4]];
-      for (const item of items) {
-        b = [];
+      for (const item of this.convertedNewIdea) {
         allSimilarity = [];
+        b = [];
         for (const final of this.finalEvaluation) {
           let text1 = item.description.split(" ").join("%20") + "%20";
-          let text2 = final.descAndAnswers.split(" ").join("%20") + "%20";
+          let text2 = final.description.split(" ").join("%20") + "%20";
           let similarity = await this.compareIdeas({ text1, text2 });
           allSimilarity.push({
             similarity,
@@ -253,10 +282,30 @@ export default {
           });
           b.push(similarity);
         }
-        console.log("This is all similarity", allSimilarity);
-        console.log("This is b", b);
         newArr.push(allSimilarity.find((a) => a.similarity == Math.max(...b)));
       }
+
+      //Here is for test
+
+      // const items = [this.convertedNewIdea[3], this.convertedNewIdea[4]];
+      // for (const item of items) {
+      //   b = [];
+      //   allSimilarity = [];
+      //   for (const final of this.finalEvaluation) {
+      //     let text1 = item.description.split(" ").join("%20") + "%20";
+      //     let text2 = final.descAndAnswers.split(" ").join("%20") + "%20";
+      //     let similarity = await this.compareIdeas({ text1, text2 });
+      //     allSimilarity.push({
+      //       similarity,
+      //       oldIdea: final.title,
+      //       newIdea: item.title,
+      //     });
+      //     b.push(similarity);
+      //   }
+      //   console.log("This is all similarity", allSimilarity);
+      //   console.log("This is b", b);
+      //   newArr.push(allSimilarity.find((a) => a.similarity == Math.max(...b)));
+      // }
 
       //  Mock api response for testing
       // newArr = [
@@ -329,8 +378,6 @@ export default {
       });
     },
     topicExtractor() {
-      // let importArr = [];
-
       this.newIdeas.forEach((i) => {
         const formdata = new FormData();
         formdata.append("key", "e56b7da7f51fdb919509b4c93e59b6bf");
@@ -422,7 +469,6 @@ export default {
   },
   updated() {
     this.initial++;
-
     if (this.initial == 5) {
       console.log("This is the new ideas from update: ", this.newIdeas);
       this.fetchIdeas()
