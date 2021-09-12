@@ -151,6 +151,9 @@ export default {
           );
         });
     },
+    capitalize(input) {
+      return input.charAt(0).toUpperCase() + input.slice(1);
+    },
     extractKey(input) {
       let exKey;
       let item = {
@@ -161,7 +164,7 @@ export default {
         {
           body: JSON.stringify(item),
           headers: {
-            Authorization: "Token e2bf65ca6d8f2e4885acc53df3589605e1bf5dda",
+            Authorization: "Token 8f63565138dfcd376a749dc9cdea2c4b7f51a507",
             "Content-Type": "application/json",
           },
           method: "POST",
@@ -177,9 +180,58 @@ export default {
           } else {
             exKey = "";
           }
-          return exKey;
+          console.log("This is the exKey:", exKey);
+          if (exKey.slice(exKey.length - 1) === "s") {
+            return this.capitalize(exKey).slice(0, exKey.length - 1);
+          } else if (exKey.indexOf(" ") > 0) {
+            return this.capitalize(exKey).slice(0, exKey.indexOf(" "));
+          }
+          return this.capitalize(exKey);
           // console.log("This is the data from monkeylearn: ", exKey);
         });
+    },
+    dbpedia(item) {
+      var url = "http://dbpedia.org/sparql";
+      let input = JSON.stringify(item);
+      var query =
+        "" +
+        "prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#>\n" +
+        "PREFIX dbo:     <http://dbpedia.org/ontology/>" +
+        "\n" +
+        "select distinct ?label ?comment ?type where {\n" +
+        `  ?resource rdfs:label ${input}@en.\n` +
+        "  ?resource rdfs:comment ?comment.\n" +
+        "  ?resource rdfs:label ?label.\n" +
+        "  ?resource rdf:type ?type.\n" +
+        " FILTER (lang(?label) = 'en')" +
+        "  FILTER (lang(?comment) = 'en')}";
+
+      // console.log("query: ", query);
+      var queryUrl =
+        url + "?query=" + encodeURIComponent(query) + "&format=json";
+      // console.log("This is the queryUrl for dbpedia: ", queryUrl);
+      return queryUrl;
+    },
+    async getDbpedia(url) {
+      // Storing response
+      const response = await fetch(url);
+
+      // Storing data in form of JSON
+      var data = await response.json();
+      if (data.results.bindings.length <= 0) {
+        // console.log("Nothing found on dbpedia");
+        return "";
+      } else {
+        // console.log(
+        //   "This is the data from dbpedia: ",
+        //   data.results.bindings[0].comment.value
+        // );
+        return data.results.bindings[0].comment.value;
+      }
+
+      // if (response) {
+
+      // }
     },
     async answerKeys(items) {
       let newItems = [...new Set(items)];
@@ -212,7 +264,7 @@ export default {
             classification: "Novel",
             title: item.title,
             novelAnswers: exKeys,
-            description: newDesc,
+            description: desc,
             descAndAnswers: [...new Set(descArr.concat(exKeys))],
             position: {
               left: this.randomIntFromInterval(42, 450),
@@ -227,13 +279,14 @@ export default {
           let desc = this.ideas.find((idea) => idea.title == item.title)
             .description;
           let newDesc = await this.extractKey(desc);
-          // let exKeys = await this.answerKeys(item.NotNovelAnswers);
+          let exKeys = await this.answerKeys(item.NotNovelAnswers);
+          let descArr = new Array(newDesc);
           this.finalEvaluation.push({
             classification: "Not Novel",
             title: item.title,
             notNovelAnswers: item.NotNovelAnswers,
-            description: newDesc,
-            descAndAnswers: desc + [...new Set(item.NotNovelAnswers)].join(" "),
+            description: desc,
+            descAndAnswers: [...new Set(descArr.concat(exKeys))],
             position: {
               left: this.randomIntFromInterval(1000, 1410),
               top: this.randomIntFromInterval(595, 800),
@@ -243,11 +296,12 @@ export default {
           let desc = this.ideas.find((idea) => idea.title == item.title)
             .description;
           let newDesc = await this.extractKey(desc);
+          let descArr = new Array(newDesc);
           this.finalEvaluation.push({
             classification: "",
             title: item.title,
-            description: newDesc,
-            descAndAnswers: desc,
+            description: desc,
+            descAndAnswers: descArr,
             position: {
               left: this.randomIntFromInterval(455, 995),
               top: this.randomIntFromInterval(340, 590),
@@ -257,23 +311,147 @@ export default {
       }
       console.log("This is the finalEvaluation: ", this.finalEvaluation);
     },
+    async finalEvalMock() {
+      //This is a mock data for this.finalEvaluation
+      this.finalEvaluation = [
+        {
+          classification: "Novel",
+          descAndAnswers: ["Instrument", "Art", "Brain", "Creativity"],
+          description: "instruments",
+          novelAnswers: ["Art", "Brain", "Creativity"],
+          position: { left: 195, top: 278 },
+          title: "Idea 1",
+        },
+        {
+          classification: "",
+          descAndAnswers: ["Book"],
+          description: "Book",
+          position: { left: 506, top: 420 },
+          title: "Idea 2",
+        },
+        {
+          classification: "Novel",
+          descAndAnswers: ["Friend", "Communication"],
+          description: "friend",
+          novelAnswers: ["Communication"],
+          position: { left: 418, top: 206 },
+          title: "Idea 3",
+        },
+        {
+          classification: "",
+          descAndAnswers: ["Art"],
+          description: "art",
+          position: { left: 518, top: 413 },
+          title: "Idea 4",
+        },
+        {
+          classification: "Novel",
+          descAndAnswers: ["Gym", "Physical"],
+          description: "Gym",
+          novelAnswers: ["Physical", "Physical"],
+          position: { left: 115, top: 116 },
+          title: "Idea 5",
+        },
+      ];
+    },
     async similarityMethod() {
       let allSimilarity = [];
       let b = [];
       let newArr = [];
-      this.newIdeas.forEach(async (item) => {
-        this.convertedNewIdea.push({
-          ...item,
-        });
-      });
+      // please uncomment the following line when you come back to Germany & comment the mockdata for this.convertedNewIdea
+
+      // this.newIdeas.forEach(async (item) => {
+      //   let newDesc = await this.extractKey(item.description);
+      //   this.convertedNewIdea.push({
+      //     ...item,
+      //     newDesc,
+      //   });
+      // });
+      this.convertedNewIdea = [
+        {
+          classification: "",
+          description: "Doing sports improves us mentally and physically",
+          extractedTopic: "sport",
+          extractedUrl: "",
+          newDesc: "Sport",
+          notNovelAnswers: {},
+          novelAnswers: {},
+          position: { left: 0, top: 0 },
+          similarIdeas: {},
+          title: "Idea 2",
+          _id: "611bd93fd940da9fb45ed9ae",
+        },
+        {
+          classification: "",
+          description: "Go for a walk.",
+          extractedTopic: "no title",
+          extractedUrl: "",
+          newDesc: "Walk",
+          notNovelAnswers: {},
+          novelAnswers: {},
+          position: { left: 0, top: 0 },
+          similarIdeas: {},
+          title: "Idea 1",
+          _id: "611bd93fd940da9fb45ed9ad",
+        },
+        {
+          classification: "",
+          description: "Spend time with people I know is entertaining.",
+          extractedTopic: "people",
+          extractedUrl: "",
+          newDesc: "Time",
+          notNovelAnswers: {},
+          novelAnswers: {},
+          position: { left: 0, top: 0 },
+          similarIdeas: {},
+          title: "Idea 3",
+          _id: "611bd93fd940da9fb45ed9af",
+        },
+        {
+          classification: "",
+          description: "Learn new Language.",
+          extractedTopic: "language",
+          extractedUrl: "",
+          newDesc: "",
+          notNovelAnswers: {},
+          novelAnswers: {},
+          position: { left: 0, top: 0 },
+          similarIdeas: {},
+          title: "Idea 4",
+          _id: "611bd93fd940da9fb45ed9b0",
+        },
+        {
+          classification: "",
+          description: "Learn an art like musical instrument.",
+          extractedTopic: "art",
+          extractedUrl: "",
+          newDesc: "Musical instrument",
+          notNovelAnswers: {},
+          novelAnswers: {},
+          position: { left: 0, top: 0 },
+          similarIdeas: {},
+          title: "Idea 5",
+          _id: "611bd93fd940da9fb45ed9b1",
+        },
+      ];
+      console.log("This is the converetedNewIdea: ", this.convertedNewIdea);
+      console.log("This is the final evaluation:", this.finalEvaluation);
       // Do not forget to uncomment line 166 & 167
       //  compare each new idea with old idea to get the most similar one
       for (const item of this.convertedNewIdea) {
         allSimilarity = [];
         b = [];
         for (const final of this.finalEvaluation) {
-          let text1 = item.description.split(" ").join("%20") + "%20";
-          let text2 = final.description.split(" ").join("%20") + "%20";
+          let newUrl = this.dbpedia(item.newDesc);
+          let newText = await this.getDbpedia(newUrl);
+          // for oldUrls you should try to give all the array member of final.descAndAnswers to dbpedia
+          let oldUrl = this.dbpedia(final.descAndAnswers[0]);
+          let oldText = await this.getDbpedia(oldUrl);
+          console.log("This is the new text: ", newText);
+          console.log("This is the old text: ", oldText);
+          let text1 = newText.split(" ").join("%20") + "%20";
+
+          let text2 = oldText.split(" ").join("%20") + "%20";
           let similarity = await this.compareIdeas({ text1, text2 });
           allSimilarity.push({
             similarity,
@@ -373,9 +551,15 @@ export default {
 
     onStart() {
       // First we need to check what is the evaluation of ideas based on all user's input
-      this.finalEvalMethod().then(async () => {
+      //when you come back to Germany please call this.finalEvalMethod() method instead of this.finalEvalMock()
+      this.finalEvalMock().then(async () => {
         this.sim = await this.similarityMethod();
+        console.log("Here is inside onStart");
       });
+      // this.finalEvalMethod().then(async () => {
+      //  this.sim = await this.similarityMethod();
+      // console.log("Here is inside onStart");
+      // });
     },
     topicExtractor() {
       this.newIdeas.forEach((i) => {
@@ -456,21 +640,21 @@ export default {
     },
   },
   created() {
+    // let url = this.dbpedia();
+    // this.getDbpedia(url);
+
     console.log("This is the new ideas: ", this.newIdeas);
     this.topicExtractor();
     this.fetchIdeas()
-      .then(() => {
-        // this.topicExtractor();
-        // this.onStart();
-      })
+      .then(() => {})
       .catch((err) => {
         console.log(err);
       });
   },
   updated() {
     this.initial++;
+    console.log("This is initial", this.initial);
     if (this.initial == 5) {
-      console.log("This is the new ideas from update: ", this.newIdeas);
       this.fetchIdeas()
         .then(() => {
           this.onStart();
