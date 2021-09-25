@@ -78,10 +78,7 @@ export default {
         console.log("Nothing found on dbpedia");
         return "";
       } else {
-        console.log(
-          "This is the data from dbpedia: ",
-          data.results.bindings[0].comment.value
-        );
+        console.log("This is the data from dbpedia: ", data.results);
         return data.results.bindings[0].comment.value;
       }
 
@@ -108,25 +105,30 @@ export default {
     //   let newText = this.getApi(newUrl);
     //   console.log("this the newText:", newText);
     // }
-    // let url = this.dbpedia();
+    // let url = this.dbpedia("Brain");
     // this.getApi(url);
-    let newText =
-      "Sport pertains to any form of competitive physical activity or game that aims to use, maintain or improve physical ability and skills while providing enjoyment to participants and";
-    let oldText = "Describes all musical instrument";
-    let text1 =
-      newText
-        .trim()
-        .split(" ")
-        .join("%20") + "%20";
-    let text2 =
-      oldText
-        .trim()
-        .split(" ")
-        .join("%20") + "%20";
-    console.log(text1);
-    console.log(text2);
-    let similarity = this.compareIdeas({ text1, text2 });
-    console.log("This is the similarity: ", similarity);
+    // let newText =
+    //   "Sport pertains to any form of competitive physical activity or game that aims to use, maintain or improve physical ability and skills while providing enjoyment to participants and,";
+    // let oldText = "Describes all musical instrument";
+    // let newText = "Sport pertains to any form of competitive physical activity or game that aims to use, maintain or improve physical ability and skills while providing enjoyment to participants and, in some cases, entertainment to spectators. Sports can, through casual or organized participation, improve one's physical health. Hundreds of sports exist, from those between single contestants, through to those with hundreds of simultaneous participants, either in teams or competing as individuals. In certain sports such as racing, many contestants may compete, simultaneously or consecutively, with one winner; in others, the contest (a match) is between two sides, each attempting to exceed the other. Some sports allow a 'tie' or 'draw', in which there is no single winner; others provide tie-breaking methods to".slice(
+    //   0,
+    //   180
+    // );
+    // let oldText = "Learn a musical instrument.";
+    // let text1 =
+    //   newText
+    //     .trim()
+    //     .split(" ")
+    //     .join("%20") + "%20";
+    // let text2 =
+    //   oldText
+    //     .trim()
+    //     .split(" ")
+    //     .join("%20") + "%20";
+    // console.log(text1);
+    // console.log(text2);
+    // let similarity = this.compareIdeas({ text1, text2 });
+    // console.log("This is the similarity: ", similarity);
   },
 };
 </script>

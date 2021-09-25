@@ -9,16 +9,21 @@
         - First please register and then login.
       </p>
       <p class="card-text">
-        - Then import a file in txt format in which all the ideas are separated
-        by "//".
+        - Then please import a file in txt format in which all the ideas are
+        separated by "//".
       </p>
       <p class="card-text">
-        - After the import you can move the idea nodes around and place them in
-        Novel/Nor Novel boxes.
+        - After importing you can move the idea nodes around and place them in
+        (Not) Novel areas.
       </p>
       <p class="card-text">
-        - At the end you can save your evaluation and get an export of your
-        evaluation.
+        - Afterwards, you can save your evaluation and import another txt file
+        in the same above-mentioned format and let the system does the
+        evaluation for you.
+      </p>
+      <p class="card-text">
+        - At the end ,the automatic evaluation of last-imported ideas will be
+        illustrated.
       </p>
       <router-link v-if="isLoggedIn" class="card-link" to="/evaluation"
         >Go to Evaluation</router-link

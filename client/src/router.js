@@ -6,6 +6,7 @@ import Login from "./pages/Login.vue";
 import Register from "./pages/Register.vue";
 import Home from "./pages/Home.vue";
 import AutomaticEval from "./pages/AutomaticEval.vue";
+import Trial from "./pages/Trial.vue";
 
 import store from "./store";
 const router = createRouter({
@@ -46,6 +47,13 @@ const router = createRouter({
     {
       path: "/automaticEvaluation",
       component: AutomaticEval,
+      meta: {
+        requiresAuth: true,
+      },
+    },
+    {
+      path: "/trial",
+      component: Trial,
       meta: {
         requiresAuth: true,
       },

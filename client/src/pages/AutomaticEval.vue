@@ -353,6 +353,7 @@ export default {
           title: "Idea 5",
         },
       ];
+      console.log("This is the finalEvaluation: ", this.finalEvaluation);
     },
     async similarityMethod() {
       let allSimilarity = [];
@@ -447,11 +448,29 @@ export default {
           // for oldUrls you should try to give all the array member of final.descAndAnswers to dbpedia
           let oldUrl = this.dbpedia(final.descAndAnswers[0]);
           let oldText = await this.getDbpedia(oldUrl);
-          console.log("This is the new text: ", newText);
-          console.log("This is the old text: ", oldText);
-          let text1 = newText.split(" ").join("%20") + "%20";
+          console.log(
+            "This is the new text: ",
+            newText.slice(0, 180).replace(/['"]+/g, "")
+          );
+          console.log(
+            "This is the old text: ",
+            oldText.slice(0, 180).replace(/['"]+/g, "")
+          );
+          let text1 =
+            newText
+              .slice(0, 120)
+              .replace(/['"]+/g, "")
+              .split(" ")
+              .join("%20") + "%20";
 
-          let text2 = oldText.split(" ").join("%20") + "%20";
+          let text2 =
+            oldText
+              .slice(0, 120)
+              .replace(/['"]+/g, "")
+              .split(" ")
+              .join("%20") + "%20";
+          console.log("Text1 :", text1);
+          console.log("Text2 :", text2);
           let similarity = await this.compareIdeas({ text1, text2 });
           allSimilarity.push({
             similarity,
@@ -635,14 +654,11 @@ export default {
           })
           .catch((error) => console.log("error", error));
       });
-
-      // this.onStart();
     },
   },
   created() {
     // let url = this.dbpedia();
     // this.getDbpedia(url);
-
     console.log("This is the new ideas: ", this.newIdeas);
     this.topicExtractor();
     this.fetchIdeas()
@@ -652,8 +668,8 @@ export default {
       });
   },
   updated() {
+    console.log("This is updated");
     this.initial++;
-    console.log("This is initial", this.initial);
     if (this.initial == 5) {
       this.fetchIdeas()
         .then(() => {

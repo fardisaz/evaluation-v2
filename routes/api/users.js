@@ -301,7 +301,7 @@ router.post(
   async (req, res) => {
     let text1 = req.body.text1;
     let text2 = req.body.text2;
-    const url = `https://api.dandelion.eu/datatxt/sim/v1/?text1=${text1}&text2=${text2}&token=943cd78b08354bd2b7d49669fc3d6ba3`;
+    const url = `https://api.dandelion.eu/datatxt/sim/v1/?text1=${text1}&text2=${text2}&token=943cd78b08354bd2b7d49669fc3d6ba3&lang=en`;
     axios
       .get(url)
       .then((response) => {
