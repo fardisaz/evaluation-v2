@@ -364,16 +364,13 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* display: block; */
   position: absolute;
   top: 0;
   height: 160px;
   width: 160px;
   border-radius: 50%;
-  /* background: #3d9eec; */
   color: #0e0d0d;
   text-align: center;
-  /* justify-content: center; */
 }
 .questions {
   margin-bottom: 0.5rem;

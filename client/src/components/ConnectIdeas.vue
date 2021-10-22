@@ -11,16 +11,16 @@
       <rect
         :x="(oldLeft + newLeft) / 2"
         :y="(oldTop + newTop) / 2"
-        width="150"
+        width="70"
         height="20"
-        style="fill:yellow;stroke:pink;stroke-width:5;stroke-opacity:0.9"
+        style="fill:white;stroke:red;stroke-width:5;stroke-opacity:0.9"
       />
       <text
         :x="(oldLeft + newLeft) / 2 + 15"
         :y="(oldTop + newTop) / 2 + 15"
         fill="black"
       >
-        similarity: {{ similarity }}
+        {{ similarity }}
       </text>
     </svg>
   </div>

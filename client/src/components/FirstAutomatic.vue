@@ -154,7 +154,7 @@ export default {
       return input.charAt(0).toUpperCase() + input.slice(1);
     },
     extractKey(input) {
-      let exKey;
+      let allKeys = [];
       let item = {
         data: [input],
       };
@@ -175,18 +175,34 @@ export default {
         .then((data) => {
           if (data.length > 0 && data[0] && data[0].extractions.length > 0) {
             // console.log("This is the data:", data[0]);
-            exKey = data[0].extractions[0].parsed_value;
+
+            data[0].extractions.forEach((item) =>
+              allKeys.push(item.parsed_value)
+            );
           } else {
-            exKey = "";
+            allKeys = [""];
           }
-          // console.log("This is the exKey:", exKey);
-          if (exKey.slice(exKey.length - 1) === "s") {
-            return this.capitalize(exKey).slice(0, exKey.length - 1);
-          } else if (exKey.indexOf(" ") > 0) {
-            return this.capitalize(exKey).slice(0, exKey.indexOf(" "));
+          //   console.log("This is the allKeys:", allKeys);
+          let newAllkeys = [];
+          if (allKeys.length === 1 && !allKeys[0]) {
+            return newAllkeys.push("");
           }
-          return this.capitalize(exKey);
-          // console.log("This is the data from monkeylearn: ", exKey);
+
+          allKeys.forEach((exKey) => {
+            if (exKey.slice(exKey.length - 1) === "s") {
+              newAllkeys.push(
+                this.capitalize(exKey).slice(0, exKey.length - 1)
+              );
+            } else if (exKey.indexOf(" ") > 0) {
+              newAllkeys.push(
+                this.capitalize(exKey).slice(0, exKey.indexOf(" "))
+              );
+            } else {
+              newAllkeys.push(this.capitalize(exKey));
+            }
+          });
+          //   console.log("This is newAllKeys: ", newAllkeys);
+          return newAllkeys;
         });
     },
     dbpedia(item) {
@@ -237,12 +253,18 @@ export default {
       let exKeys = [];
       for (let item of newItems) {
         if (item) {
-          let ex = await this.extractKey(item);
-          if (ex) {
-            exKeys.push(ex);
+          let extracts = await this.extractKey(item);
+          //   console.log("This is extracts:", extracts);
+          if (Array.isArray(extracts)) {
+            for (let ex of extracts) {
+              if (ex) {
+                exKeys.push(ex);
+              }
+            }
           }
         }
       }
+      // return an array of keys
       return exKeys;
     },
     async finalEvalMethod() {
@@ -256,18 +278,37 @@ export default {
         ) {
           let desc = this.ideas.find((idea) => idea.title == item.title)
             .description;
+          // extract keys from description
           let newDesc = await this.extractKey(desc);
+          //extract keys from array of novel answers
           let exKeys = await this.answerKeys(item.NovelAnswers);
-          let descArr = new Array(newDesc);
+          let randomLeft = 0;
+          let randomTop = 0;
+          randomLeft = this.randomIntFromInterval(42, 450);
+          while (
+            this.ideas.forEach((idea) => {
+              Math.abs(randomLeft - idea.position.left) <= 90;
+            })
+          ) {
+            randomLeft += 160;
+          }
+          randomTop = this.randomIntFromInterval(104, 335);
+          while (
+            this.ideas.forEach((idea) => {
+              Math.abs(randomTop - idea.position.top) <= 90;
+            })
+          ) {
+            randomTop += 160;
+          }
           this.finalEvaluation.push({
             classification: "Novel",
             title: item.title,
             novelAnswers: exKeys,
             description: desc,
-            descAndAnswers: [...new Set(descArr.concat(exKeys))],
+            descAndAnswers: [...new Set(newDesc.concat(exKeys))],
             position: {
-              left: this.randomIntFromInterval(42, 450),
-              top: this.randomIntFromInterval(104, 335),
+              left: randomLeft,
+              top: randomTop,
             },
           });
         } else if (
@@ -279,13 +320,12 @@ export default {
             .description;
           let newDesc = await this.extractKey(desc);
           let exKeys = await this.answerKeys(item.NotNovelAnswers);
-          let descArr = new Array(newDesc);
           this.finalEvaluation.push({
             classification: "Not Novel",
             title: item.title,
             notNovelAnswers: item.NotNovelAnswers,
             description: desc,
-            descAndAnswers: [...new Set(descArr.concat(exKeys))],
+            descAndAnswers: [...new Set(newDesc.concat(exKeys))],
             position: {
               left: this.randomIntFromInterval(1000, 1410),
               top: this.randomIntFromInterval(595, 800),
@@ -295,12 +335,11 @@ export default {
           let desc = this.ideas.find((idea) => idea.title == item.title)
             .description;
           let newDesc = await this.extractKey(desc);
-          let descArr = new Array(newDesc);
           this.finalEvaluation.push({
             classification: "",
             title: item.title,
             description: desc,
-            descAndAnswers: descArr,
+            descAndAnswers: newDesc,
             position: {
               left: this.randomIntFromInterval(455, 995),
               top: this.randomIntFromInterval(340, 590),
@@ -310,214 +349,78 @@ export default {
       }
       console.log("This is the finalEvaluation: ", this.finalEvaluation);
     },
-    async finalEvalMock() {
-      //This is a mock data for this.finalEvaluation
-      this.finalEvaluation = [
-        {
-          classification: "Novel",
-          descAndAnswers: ["Instrument", "Art", "Brain", "Creativity"],
-          description: "instruments",
-          novelAnswers: ["Art", "Brain", "Creativity"],
-          position: { left: 195, top: 278 },
-          title: "Idea 1",
-        },
-        {
-          classification: "",
-          descAndAnswers: ["Book"],
-          description: "Book",
-          position: { left: 506, top: 420 },
-          title: "Idea 2",
-        },
-        {
-          classification: "Novel",
-          descAndAnswers: ["Friend", "Communication"],
-          description: "friend",
-          novelAnswers: ["Communication"],
-          position: { left: 418, top: 206 },
-          title: "Idea 3",
-        },
-        {
-          classification: "",
-          descAndAnswers: ["Art"],
-          description: "art",
-          position: { left: 518, top: 413 },
-          title: "Idea 4",
-        },
-        {
-          classification: "Novel",
-          descAndAnswers: ["Gym", "Physical"],
-          description: "Gym",
-          novelAnswers: ["Physical", "Physical"],
-          position: { left: 115, top: 116 },
-          title: "Idea 5",
-        },
-      ];
-      console.log("This is the finalEvaluation: ", this.finalEvaluation);
-    },
+
     async similarityMethod() {
       let allSimilarity = [];
       let b = [];
       let newArr = [];
-      // please uncomment the following line when you come back to Germany & comment the mockdata for this.convertedNewIdea
 
-      // this.newIdeas.forEach(async (item) => {
-      //   let newDesc = await this.extractKey(item.description);
-      //   this.convertedNewIdea.push({
-      //     ...item,
-      //     newDesc,
-      //   });
-      // });
-      this.convertedNewIdea = [
-        {
-          classification: "",
-          description: "Doing sports improves us mentally and physically",
-          extractedTopic: "sport",
-          extractedUrl: "",
-          newDesc: "Sport",
-          notNovelAnswers: {},
-          novelAnswers: {},
-          position: { left: 0, top: 0 },
-          similarIdeas: {},
-          title: "Idea 2",
-          _id: "611bd93fd940da9fb45ed9ae",
-        },
-        {
-          classification: "",
-          description: "Go for a walk.",
-          extractedTopic: "no title",
-          extractedUrl: "",
-          newDesc: "Walk",
-          notNovelAnswers: {},
-          novelAnswers: {},
-          position: { left: 0, top: 0 },
-          similarIdeas: {},
-          title: "Idea 1",
-          _id: "611bd93fd940da9fb45ed9ad",
-        },
-        {
-          classification: "",
-          description: "Spend time with people I know is entertaining.",
-          extractedTopic: "people",
-          extractedUrl: "",
-          newDesc: "Time",
-          notNovelAnswers: {},
-          novelAnswers: {},
-          position: { left: 0, top: 0 },
-          similarIdeas: {},
-          title: "Idea 3",
-          _id: "611bd93fd940da9fb45ed9af",
-        },
-        {
-          classification: "",
-          description: "Learn new Language.",
-          extractedTopic: "language",
-          extractedUrl: "",
-          newDesc: "",
-          notNovelAnswers: {},
-          novelAnswers: {},
-          position: { left: 0, top: 0 },
-          similarIdeas: {},
-          title: "Idea 4",
-          _id: "611bd93fd940da9fb45ed9b0",
-        },
-        {
-          classification: "",
-          description: "Learn an art like musical instrument.",
-          extractedTopic: "art",
-          extractedUrl: "",
-          newDesc: "Musical instrument",
-          notNovelAnswers: {},
-          novelAnswers: {},
-          position: { left: 0, top: 0 },
-          similarIdeas: {},
-          title: "Idea 5",
-          _id: "611bd93fd940da9fb45ed9b1",
-        },
-      ];
+      for (let item of this.newIdeas) {
+        let newDesc = await this.extractKey(item.description);
+        this.convertedNewIdea.push({
+          ...item,
+          newDesc,
+        });
+      }
+
       console.log("This is the converetedNewIdea: ", this.convertedNewIdea);
-      console.log("This is the final evaluation:", this.finalEvaluation);
-      // Do not forget to uncomment line 166 & 167
       //  compare each new idea with old idea to get the most similar one
       for (const item of this.convertedNewIdea) {
         allSimilarity = [];
         b = [];
         for (const final of this.finalEvaluation) {
-          let newUrl = this.dbpedia(item.newDesc);
-          let newText = await this.getDbpedia(newUrl);
-          // for oldUrls you should try to give all the array member of final.descAndAnswers to dbpedia
-          let oldUrl = this.dbpedia(final.descAndAnswers[0]);
-          let oldText = await this.getDbpedia(oldUrl);
-          console.log(
-            "This is the new text: ",
-            newText.slice(0, 180).replace(/['"]+/g, "")
-          );
-          console.log(
-            "This is the old text: ",
-            oldText.slice(0, 180).replace(/['"]+/g, "")
-          );
-          let text1 =
-            newText
-              .slice(0, 120)
-              .replace(/['"]+/g, "")
-              .split(" ")
-              .join("%20") + "%20";
+          let allNewText = "";
+          if (Array.isArray(item.newDesc)) {
+            for (let desc of item.newDesc) {
+              let newUrl = this.dbpedia(desc);
+              let newText = await this.getDbpedia(newUrl);
+              allNewText = allNewText.concat(" ").concat(newText.split(".")[0]);
+            }
+            // console.log("This is allNewText: ", allNewText);
+          }
 
-          let text2 =
-            oldText
-              .slice(0, 120)
-              .replace(/['"]+/g, "")
-              .split(" ")
-              .join("%20") + "%20";
-          console.log("Text1 :", text1);
-          console.log("Text2 :", text2);
-          let similarity = await this.compareIdeas({ text1, text2 });
-          allSimilarity.push({
-            similarity,
-            oldIdea: final.title,
-            newIdea: item.title,
-          });
-          b.push(similarity);
+          // for oldUrls you should try to give all the array member of final.descAndAnswers to dbpedia
+          let allOldText = "";
+          if (Array.isArray(final.descAndAnswers)) {
+            for (let text of final.descAndAnswers) {
+              let oldUrl = this.dbpedia(text);
+              let oldText = await this.getDbpedia(oldUrl);
+              allOldText = allOldText.concat(" ").concat(oldText.split(".")[0]);
+            }
+            // console.log("This is allOldText: ", allOldText);
+          }
+
+          if (allNewText && allOldText) {
+            let text1 =
+              allNewText
+                .slice(0, 120)
+                .replace(/['"]+/g, "")
+                .split(" ")
+                .join("%20") + "%20";
+            let text2 =
+              allOldText
+                .slice(0, 120)
+                .replace(/['"]+/g, "")
+                .split(" ")
+                .join("%20") + "%20";
+            let similarity = await this.compareIdeas({ text1, text2 });
+            allSimilarity.push({
+              similarity,
+              oldIdea: final.title,
+              newIdea: item.title,
+            });
+            b.push(similarity);
+          }
         }
         newArr.push(allSimilarity.find((a) => a.similarity == Math.max(...b)));
       }
-
-      //Here is for test
-
-      // const items = [this.convertedNewIdea[3], this.convertedNewIdea[4]];
-      // for (const item of items) {
-      //   b = [];
-      //   allSimilarity = [];
-      //   for (const final of this.finalEvaluation) {
-      //     let text1 = item.description.split(" ").join("%20") + "%20";
-      //     let text2 = final.descAndAnswers.split(" ").join("%20") + "%20";
-      //     let similarity = await this.compareIdeas({ text1, text2 });
-      //     allSimilarity.push({
-      //       similarity,
-      //       oldIdea: final.title,
-      //       newIdea: item.title,
-      //     });
-      //     b.push(similarity);
-      //   }
-      //   console.log("This is all similarity", allSimilarity);
-      //   console.log("This is b", b);
-      //   newArr.push(allSimilarity.find((a) => a.similarity == Math.max(...b)));
-      // }
-
-      //  Mock api response for testing
-      //   newArr = [
-      //     { oldIdea: "Idea 1", newIdea: "Idea 5", similarity: 0.802 },
-      //     { oldIdea: "Idea 5", newIdea: "Idea 2", similarity: 0.52 },
-      //     { oldIdea: "Idea 3", newIdea: "Idea 3", similarity: 0.69 },
-      //     { oldIdea: "Idea 4", newIdea: "Idea 4", similarity: 0.54 },
-      //     { oldIdea: "Idea 2", newIdea: "Idea 1", similarity: 0.0 },
-      //   ];
       console.log("This is the new array", newArr);
+
       let old;
       for (const load of this.convertedNewIdea) {
-        // if (newArr.find(s=>s.newIdea==load.title).similarity > 0.5)
+        //   if (newArr.find(s=>s.newIdea==load.title).similarity > 0.5)
         let sim = newArr.find((s) => s.newIdea == load.title).similarity;
-        if (sim > 0.3) {
-          // console.log(arr[index]);
+        if (sim > 0.5) {
           old = this.finalEvaluation.find(
             (final) =>
               final.title == newArr.find((s) => s.newIdea == load.title).oldIdea
@@ -554,7 +457,7 @@ export default {
           });
         }
       }
-      // console.log("This is the imported Ideas", this.importedIdea);
+      console.log("This is the imported Ideas", this.importedIdea);
       for (let item of newArr) {
         if (item.similarity != 0) {
           this.arrowArray.push({
@@ -569,20 +472,15 @@ export default {
           });
         }
       }
-      // console.log("This is the positions of old new ideas", this.arrowArray);
+      console.log("This is the positions of old new ideas", this.arrowArray);
     },
 
     onStart() {
       // First we need to check what is the evaluation of ideas based on all user's input
-      //when you come back to Germany please call this.finalEvalMethod() method instead of this.finalEvalMock()
-      this.finalEvalMock().then(async () => {
+      this.finalEvalMethod().then(async () => {
         this.sim = await this.similarityMethod();
-        // console.log("Here is inside onStart");
+        console.log("Here is inside onStart");
       });
-      // this.finalEvalMethod().then(async () => {
-      //  this.sim = await this.similarityMethod();
-      // console.log("Here is inside onStart");
-      // });
     },
     topicExtractor() {
       this.newIdeas.forEach((i) => {
@@ -661,9 +559,6 @@ export default {
     },
   },
   created() {
-    // let url = this.dbpedia();
-    // this.getDbpedia(url);
-    // console.log("This is the new ideas: ", this.newIdeas);
     this.topicExtractor();
     this.fetchIdeas()
       .then(() => {})
@@ -672,7 +567,6 @@ export default {
       });
   },
   updated() {
-    // console.log("This is updated");
     this.initial++;
     if (this.initial == 5) {
       this.fetchIdeas()
