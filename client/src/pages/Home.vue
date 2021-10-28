@@ -21,6 +21,10 @@
         nodes around and place them in (Not) Novel areas or none of them.
       </p>
       <p class="card-text">
+        - If you drop the ideas in (Not) Novel areas, some questions will be
+        popped-up.Please answer them briefly.
+      </p>
+      <p class="card-text">
         - Afterwards, you can save your evaluation and import the second txt
         file and let the system does the evaluation for you.
       </p>

@@ -32,9 +32,9 @@ const IdeaSchema = new Schema({
   extractedTopic: {
     type: String,
   },
-  extractedUrl:{
+  extractedUrl: {
     type: String,
-  }
+  },
 });
 
 //Create the User Schema
@@ -71,7 +71,7 @@ UserSchema.pre("save", function (next) {
     notNovelAnswers: ["", "", ""],
     similarIdeas: [],
     extractedTopic: "",
-    extractedUrl:""
+    extractedUrl: "",
   });
   this.ideas.push({
     title: "Idea 2",
@@ -85,7 +85,7 @@ UserSchema.pre("save", function (next) {
     notNovelAnswers: ["", "", ""],
     similarIdeas: [],
     extractedTopic: "",
-    extractedUrl:""
+    extractedUrl: "",
   });
   this.ideas.push({
     title: "Idea 3",
@@ -99,7 +99,7 @@ UserSchema.pre("save", function (next) {
     notNovelAnswers: ["", "", ""],
     similarIdeas: [],
     extractedTopic: "",
-    extractedUrl:""
+    extractedUrl: "",
   });
   this.ideas.push({
     title: "Idea 4",
@@ -113,7 +113,7 @@ UserSchema.pre("save", function (next) {
     notNovelAnswers: ["", "", ""],
     similarIdeas: [],
     extractedTopic: "",
-    extractedUrl:""
+    extractedUrl: "",
   });
   this.ideas.push({
     title: "Idea 5",
@@ -127,7 +127,77 @@ UserSchema.pre("save", function (next) {
     notNovelAnswers: ["", "", ""],
     similarIdeas: [],
     extractedTopic: "",
-    extractedUrl:""
+    extractedUrl: "",
+  });
+  this.ideas.push({
+    title: "Idea 6",
+    position: {
+      left: 90,
+      top: 500,
+    },
+    description: "",
+    classification: "",
+    novelAnswers: ["", ""],
+    notNovelAnswers: ["", "", ""],
+    similarIdeas: [],
+    extractedTopic: "",
+    extractedUrl: "",
+  });
+  this.ideas.push({
+    title: "Idea 7",
+    position: {
+      left: 400,
+      top: 400,
+    },
+    description: "",
+    classification: "",
+    novelAnswers: ["", ""],
+    notNovelAnswers: ["", "", ""],
+    similarIdeas: [],
+    extractedTopic: "",
+    extractedUrl: "",
+  });
+  this.ideas.push({
+    title: "Idea 8",
+    position: {
+      left: 1000,
+      top: 350,
+    },
+    description: "",
+    classification: "",
+    novelAnswers: ["", ""],
+    notNovelAnswers: ["", "", ""],
+    similarIdeas: [],
+    extractedTopic: "",
+    extractedUrl: "",
+  });
+  this.ideas.push({
+    title: "Idea 9",
+    position: {
+      left: 900,
+      top: 245,
+    },
+    description: "",
+    classification: "",
+    novelAnswers: ["", ""],
+    notNovelAnswers: ["", "", ""],
+    similarIdeas: [],
+    extractedTopic: "",
+    extractedUrl: "",
+  });
+  this.ideas.push({
+    title: "Idea 10",
+    position: {
+      left: 590,
+      top: 600,
+    },
+    description: "",
+    classification: "",
+    novelAnswers: ["", ""],
+    notNovelAnswers: ["", "", ""],
+    similarIdeas: [],
+    extractedTopic: "",
+    extractedUrl: "",
   });
   this.newIdeas.push({
     title: "Idea 1",
@@ -138,7 +208,7 @@ UserSchema.pre("save", function (next) {
     description: "",
     classification: "",
     extractedTopic: "",
-    extractedUrl:""
+    extractedUrl: "",
   });
   this.newIdeas.push({
     title: "Idea 2",
@@ -149,7 +219,7 @@ UserSchema.pre("save", function (next) {
     description: "",
     classification: "",
     extractedTopic: "",
-    extractedUrl:""
+    extractedUrl: "",
   });
   this.newIdeas.push({
     title: "Idea 3",
@@ -160,7 +230,7 @@ UserSchema.pre("save", function (next) {
     description: "",
     classification: "",
     extractedTopic: "",
-    extractedUrl:""
+    extractedUrl: "",
   });
   this.newIdeas.push({
     title: "Idea 4",
@@ -171,7 +241,7 @@ UserSchema.pre("save", function (next) {
     description: "",
     classification: "",
     extractedTopic: "",
-    extractedUrl:""
+    extractedUrl: "",
   });
   this.newIdeas.push({
     title: "Idea 5",
@@ -182,7 +252,62 @@ UserSchema.pre("save", function (next) {
     description: "",
     classification: "",
     extractedTopic: "",
-    extractedUrl:""
+    extractedUrl: "",
+  });
+  this.newIdeas.push({
+    title: "Idea 6",
+    position: {
+      left: 0,
+      top: 0,
+    },
+    description: "",
+    classification: "",
+    extractedTopic: "",
+    extractedUrl: "",
+  });
+  this.newIdeas.push({
+    title: "Idea 7",
+    position: {
+      left: 0,
+      top: 0,
+    },
+    description: "",
+    classification: "",
+    extractedTopic: "",
+    extractedUrl: "",
+  });
+  this.newIdeas.push({
+    title: "Idea 8",
+    position: {
+      left: 0,
+      top: 0,
+    },
+    description: "",
+    classification: "",
+    extractedTopic: "",
+    extractedUrl: "",
+  });
+  this.newIdeas.push({
+    title: "Idea 9",
+    position: {
+      left: 0,
+      top: 0,
+    },
+    description: "",
+    classification: "",
+    extractedTopic: "",
+    extractedUrl: "",
+  });
+  this.newIdeas.push({
+    title: "Idea 10",
+    position: {
+      left: 0,
+      top: 0,
+    },
+    description: "",
+    classification: "",
+    extractedTopic: "",
+    extractedUrl: "",
   });
   next();
 });

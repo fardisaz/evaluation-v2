@@ -153,57 +153,66 @@ export default {
     capitalize(input) {
       return input.charAt(0).toUpperCase() + input.slice(1);
     },
-    extractKey(input) {
-      let allKeys = [];
-      let item = {
-        data: [input],
-      };
-      return fetch(
-        "https://api.monkeylearn.com/v3/extractors/ex_YCya9nrn/extract/",
-        {
-          body: JSON.stringify(item),
-          headers: {
-            Authorization: "Token 8f63565138dfcd376a749dc9cdea2c4b7f51a507",
-            "Content-Type": "application/json",
-          },
-          method: "POST",
-        }
-      )
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          if (data.length > 0 && data[0] && data[0].extractions.length > 0) {
-            // console.log("This is the data:", data[0]);
+    async extractKey(input) {
+      try {
+        let allKeys = [];
+        let item = {
+          data: [input],
+        };
+        let res = await fetch(
+          "https://api.monkeylearn.com/v3/extractors/ex_YCya9nrn/extract/",
+          {
+            body: JSON.stringify(item),
+            headers: {
+              Authorization: "Token 8f63565138dfcd376a749dc9cdea2c4b7f51a507",
+              "Content-Type": "application/json",
+            },
+            method: "POST",
+          }
+        );
+        let data = await res.json();
 
-            data[0].extractions.forEach((item) =>
-              allKeys.push(item.parsed_value)
+        if (data.length > 0 && data[0] && data[0].extractions.length > 0) {
+          // console.log("This is the data:", data[0]);
+
+          data[0].extractions.forEach((item) =>
+            allKeys.push(item.parsed_value)
+          );
+        } else {
+          allKeys = [""];
+        }
+        //   console.log("This is the allKeys:", allKeys);
+        let newAllkeys = [];
+        if (allKeys.length === 1 && !allKeys[0]) {
+          return newAllkeys.push("");
+        }
+        allKeys.forEach((exKey) => {
+          if (exKey.slice(exKey.length - 1) === "s") {
+            newAllkeys.push(this.capitalize(exKey).slice(0, exKey.length - 1));
+          } else if (exKey.indexOf(" ") > 0) {
+            newAllkeys.push(
+              this.capitalize(exKey).slice(0, exKey.indexOf(" "))
             );
           } else {
-            allKeys = [""];
+            newAllkeys.push(this.capitalize(exKey));
           }
-          //   console.log("This is the allKeys:", allKeys);
-          let newAllkeys = [];
-          if (allKeys.length === 1 && !allKeys[0]) {
-            return newAllkeys.push("");
-          }
-
-          allKeys.forEach((exKey) => {
-            if (exKey.slice(exKey.length - 1) === "s") {
-              newAllkeys.push(
-                this.capitalize(exKey).slice(0, exKey.length - 1)
-              );
-            } else if (exKey.indexOf(" ") > 0) {
-              newAllkeys.push(
-                this.capitalize(exKey).slice(0, exKey.indexOf(" "))
-              );
-            } else {
-              newAllkeys.push(this.capitalize(exKey));
-            }
-          });
-          //   console.log("This is newAllKeys: ", newAllkeys);
-          return newAllkeys;
         });
+        console.log("This is newAllKeys: ", newAllkeys);
+        return newAllkeys;
+      } catch (err) {
+        if (err.code == "CONCURRENCY_RATE_LIMIT") {
+          // if (err.retryable) {
+          await this.delay(1000);
+          // continue;
+        } else {
+          throw err;
+        }
+      }
+    },
+    delay(time) {
+      return new Promise((resolve) => {
+        setTimeout(resolve, time);
+      });
     },
     dbpedia(item) {
       var url = "http://dbpedia.org/sparql";
@@ -269,18 +278,26 @@ export default {
     },
     async finalEvalMethod() {
       let totalEval = await this.countNovelty();
-
       for (let item of totalEval.arr) {
+        let desc = this.ideas.find((idea) => idea.title == item.title)
+          .description;
+        // extract keys from description
+        let newDesc = await this.extractKey(desc);
+        if (newDesc == 1) {
+          newDesc = [];
+        }
         if (
           item.Novel > item.NotNovel &&
           (totalEval.total == item.Novel + item.NotNovel ||
             item.Novel > totalEval.total - item.Novel)
         ) {
-          let desc = this.ideas.find((idea) => idea.title == item.title)
-            .description;
-          // extract keys from description
-          let newDesc = await this.extractKey(desc);
+          // let desc = this.ideas.find((idea) => idea.title == item.title)
+          //   .description;
+          // // extract keys from description
+          // let newDesc;
+
           //extract keys from array of novel answers
+
           let exKeys = await this.answerKeys(item.NovelAnswers);
           let randomLeft = 0;
           let randomTop = 0;
@@ -316,10 +333,29 @@ export default {
           (totalEval.total == item.Novel + item.NotNovel ||
             item.NotNovel > totalEval.total - item.NotNovel)
         ) {
-          let desc = this.ideas.find((idea) => idea.title == item.title)
-            .description;
-          let newDesc = await this.extractKey(desc);
+          // let desc = this.ideas.find((idea) => idea.title == item.title)
+          //   .description;
+          // let newDesc = await this.extractKey(desc);
+
           let exKeys = await this.answerKeys(item.NotNovelAnswers);
+          let randomLeft = 0;
+          let randomTop = 0;
+          randomLeft = this.randomIntFromInterval(1000, 1410);
+          while (
+            this.ideas.forEach((idea) => {
+              Math.abs(randomLeft - idea.position.left) <= 90;
+            })
+          ) {
+            randomLeft -= 160;
+          }
+          randomTop = this.randomIntFromInterval(595, 800);
+          while (
+            this.ideas.forEach((idea) => {
+              Math.abs(randomTop - idea.position.top) <= 90;
+            })
+          ) {
+            randomTop -= 160;
+          }
           this.finalEvaluation.push({
             classification: "Not Novel",
             title: item.title,
@@ -327,26 +363,179 @@ export default {
             description: desc,
             descAndAnswers: [...new Set(newDesc.concat(exKeys))],
             position: {
-              left: this.randomIntFromInterval(1000, 1410),
-              top: this.randomIntFromInterval(595, 800),
+              left: randomLeft,
+              top: randomTop,
             },
           });
         } else {
-          let desc = this.ideas.find((idea) => idea.title == item.title)
-            .description;
-          let newDesc = await this.extractKey(desc);
+          // let desc = this.ideas.find((idea) => idea.title == item.title)
+          //   .description;
+          // let newDesc = await this.extractKey(desc);
+          let randomLeft = 0;
+          let randomTop = 0;
+          randomLeft = this.randomIntFromInterval(455, 995);
+          while (
+            this.ideas.forEach((idea) => {
+              Math.abs(randomLeft - idea.position.left) <= 90;
+            })
+          ) {
+            randomLeft -= 160;
+          }
+          randomTop = this.randomIntFromInterval(1340, 590);
+          while (
+            this.ideas.forEach((idea) => {
+              Math.abs(randomTop - idea.position.top) <= 90;
+            })
+          ) {
+            randomTop += 160;
+          }
           this.finalEvaluation.push({
             classification: "",
             title: item.title,
             description: desc,
             descAndAnswers: newDesc,
             position: {
-              left: this.randomIntFromInterval(455, 995),
-              top: this.randomIntFromInterval(340, 590),
+              left: randomLeft,
+              top: randomTop,
             },
           });
         }
       }
+      console.log("This is the finalEvaluation: ", this.finalEvaluation);
+    },
+    async finalEvalMock() {
+      //This is a mock data for this.finalEvaluation
+      this.finalEvaluation = [
+        {
+          classification: "Not Novel",
+          descAndAnswers: ["Home", "Animal", "Unfamiliar", "People", "Alert"],
+          description:
+            "It can be used as a home security device. It can recognize the people and animal movements that are usually inside the home and alert when there is an unfamiliar movement.",
+          notNovelAnswers: ["", "", ""],
+          position: { left: 1218, top: 617 },
+          title: "Idea 1",
+        },
+        {
+          classification: "Not Novel",
+          descAndAnswers: [
+            "Potential",
+            "Surveillance",
+            "Better solution",
+            "Cctv",
+          ],
+          description:
+            "It can be used for surveillance of potential criminals.",
+          notNovelAnswers: [
+            "it's costly",
+            "there are already better solutions like CCTV",
+            "",
+          ],
+          position: { left: 1142, top: 710 },
+          title: "Idea 2",
+        },
+        {
+          classification: "Not Novel",
+          descAndAnswers: ["Movement", "Detect", "Gait"],
+          description:
+            "Detect criminals by their movement patterns such as their gait.",
+          notNovelAnswers: [],
+          position: { left: 1386, top: 615 },
+          title: "Idea 3",
+        },
+        {
+          classification: "Novel",
+          descAndAnswers: ["Animal", "Precise"],
+          description: "used to track animal populations",
+          novelAnswers: ["Precise"],
+          position: { left: 309, top: 308 },
+          title: "Idea 4",
+        },
+        {
+          classification: "Novel",
+          descAndAnswers: ["Fire", "Firefighter", "Animal"],
+          description: "Can help firefighters locate animals in a fire.",
+          novelAnswers: ["Animal"],
+          position: { left: 312, top: 190 },
+          title: "Idea 5",
+        },
+        {
+          classification: "Novel",
+          descAndAnswers: [
+            "Severe weather event",
+            "Atmosphere",
+            "Tornado",
+            "Method",
+            "Natural disater",
+          ],
+          description:
+            "Could be used as a method of identifying when a tornado, or other severe weather event, begins to form in the atmosphere.",
+          novelAnswers: ["Natural disater"],
+          position: { left: 75, top: 145 },
+          title: "Idea 6",
+        },
+        {
+          classification: "Not Novel",
+          descAndAnswers: [
+            "Unknown",
+            "Security",
+            "Movement",
+            "House",
+            "Old idea",
+          ],
+          description:
+            "Use it as a security device to detect if unknown people are attempting to enter a house by looking at their movement patterns.",
+          notNovelAnswers: ["old idea", "", ""],
+          position: { left: 1179, top: 683 },
+          title: "Idea 7",
+        },
+        {
+          classification: "Not Novel",
+          descAndAnswers: [
+            "Animal",
+            "Pet",
+            "Technology",
+            "Lot",
+            "Scene",
+            "Topic",
+            "Cause",
+            "Solution",
+          ],
+          description:
+            "Use the technology for pet cameras to track animal movement",
+          notNovelAnswers: [
+            "A lot of works need to be done behind the scene.",
+            "Cause there are already RFID technologies exist.",
+            "Cause there are already some solutions for this topic",
+          ],
+          position: { left: 1275, top: 633 },
+          title: "Idea 8",
+        },
+        {
+          classification: "Novel",
+          descAndAnswers: ["Debris", "Search", "Rescue", "Movement"],
+          description:
+            "Use it in search and rescue to find movement in debris fields.",
+          novelAnswers: [],
+          position: { left: 66, top: 215 },
+          title: "Idea 9",
+        },
+        {
+          classification: "Novel",
+          descAndAnswers: [
+            "Dangerous",
+            "Rescue operation",
+            "Search",
+            "Technology",
+            "Severe",
+            "People",
+          ],
+          description:
+            "The technology would be useful for search and rescue operations in dangerous geographical locations.",
+          novelAnswers: ["Severe", "People"],
+          position: { left: 234, top: 242 },
+          title: "Idea 10",
+        },
+      ];
       console.log("This is the finalEvaluation: ", this.finalEvaluation);
     },
 
@@ -354,7 +543,6 @@ export default {
       let allSimilarity = [];
       let b = [];
       let newArr = [];
-
       for (let item of this.newIdeas) {
         let newDesc = await this.extractKey(item.description);
         this.convertedNewIdea.push({
@@ -362,7 +550,135 @@ export default {
           newDesc,
         });
       }
-
+      // this.convertedNewIdea = [
+      //   {
+      //     classification: "",
+      //     description:
+      //       "It could be used for home security by monitoring your home and alerting to unknown people and motions.",
+      //     extractedTopic: "home",
+      //     extractedUrl: "",
+      //     newDesc: ["Unknown", "Home", "Motion", "Home"],
+      //     position: {
+      //       left: 0,
+      //       top: 0,
+      //     },
+      //     title: "Idea 1",
+      //   },
+      //   {
+      //     classification: "",
+      //     description:
+      //       "Helping firefighters in ways to get into a house that is on fire. Which way they should go, and if anybody is inside.",
+      //     extractedTopic: "fireman",
+      //     extractedUrl: "",
+      //     newDesc: ["Way", "Fire", "House", "Firefighter", "Anybody"],
+      //     position: {
+      //       left: 0,
+      //       top: 0,
+      //     },
+      //     title: "Idea 2",
+      //   },
+      //   {
+      //     classification: "",
+      //     description:
+      //       "It could help to identify and rescue people trapped in severe weather conditions.",
+      //     extractedTopic: "people",
+      //     extractedUrl: "",
+      //     newDesc: ["Severe weather condition", "People"],
+      //     position: {
+      //       left: 0,
+      //       top: 0,
+      //     },
+      //     title: "Idea 3",
+      //   },
+      //   {
+      //     classification: "",
+      //     description:
+      //       "send it into a tornado or hurricane to help get pattern and weather data",
+      //     extractedTopic: "tornado",
+      //     extractedUrl: "",
+      //     newDesc: ["Weather", "Tornado", "Pattern", "Hurricane"],
+      //     position: {
+      //       left: 0,
+      //       top: 0,
+      //     },
+      //     title: "Idea 4",
+      //   },
+      //   {
+      //     classification: "",
+      //     description:
+      //       "It could be useful in tracking criminals by recognizing their movement patterns.",
+      //     extractedTopic: "no title",
+      //     extractedUrl: "",
+      //     newDesc: 1,
+      //     position: {
+      //       left: 0,
+      //       top: 0,
+      //     },
+      //     title: "Idea 5",
+      //   },
+      //   {
+      //     classification: "",
+      //     description:
+      //       "The technology can be used to locate people or animals in case of natural disaster.",
+      //     extractedTopic: "natural catastrophe",
+      //     extractedUrl: "",
+      //     newDesc: ["Natural", "Case", "Animal", "People", "Technology"],
+      //     position: {
+      //       left: 0,
+      //       top: 0,
+      //     },
+      //     title: "Idea 6",
+      //   },
+      //   {
+      //     classification: "",
+      //     description: "watch movement outside your house or business",
+      //     extractedTopic: "home",
+      //     extractedUrl: "",
+      //     newDesc: ["House", "Busines", "Movement"],
+      //     position: {
+      //       left: 0,
+      //       top: 0,
+      //     },
+      //     title: "Idea 7",
+      //   },
+      //   {
+      //     classification: "",
+      //     description:
+      //       "This could be used as surveillance on humans or criminals, like with law enforcement.",
+      //     extractedTopic: "Law Enforcement",
+      //     extractedUrl: "",
+      //     newDesc: ["Law", "Human", "Criminal", "Surveillance"],
+      //     position: {
+      //       left: 0,
+      //       top: 0,
+      //     },
+      //     title: "Idea 8",
+      //   },
+      //   {
+      //     classification: "",
+      //     description: "check animal population in remote areas.",
+      //     extractedTopic: "check",
+      //     extractedUrl: "",
+      //     newDesc: ["Animal", "Remote"],
+      //     position: {
+      //       left: 0,
+      //       top: 0,
+      //     },
+      //     title: "Idea 9",
+      //   },
+      //   {
+      //     classification: "",
+      //     description: "It can track migration patterns of animals.",
+      //     extractedTopic: "migration",
+      //     extractedUrl: "",
+      //     newDesc: ["Pattern", "Migration"],
+      //     position: {
+      //       left: 0,
+      //       top: 0,
+      //     },
+      //     title: "Idea 10",
+      //   },
+      // ];
       console.log("This is the converetedNewIdea: ", this.convertedNewIdea);
       //  compare each new idea with old idea to get the most similar one
       for (const item of this.convertedNewIdea) {
@@ -376,9 +692,11 @@ export default {
               let newText = await this.getDbpedia(newUrl);
               allNewText = allNewText.concat(" ").concat(newText.split(".")[0]);
             }
+            if (allNewText == "") {
+              allNewText = allNewText.concat(item.description);
+            }
             // console.log("This is allNewText: ", allNewText);
           }
-
           // for oldUrls you should try to give all the array member of final.descAndAnswers to dbpedia
           let allOldText = "";
           if (Array.isArray(final.descAndAnswers)) {
@@ -389,18 +707,23 @@ export default {
             }
             // console.log("This is allOldText: ", allOldText);
           }
-
+          // From here we comment it!!!!
           if (allNewText && allOldText) {
+            console.log("This is inside the similarity api");
             let text1 =
               allNewText
                 .slice(0, 120)
                 .replace(/['"]+/g, "")
+                .replace(/[^\x00-\x7F]/g, "")
+                .trim()
                 .split(" ")
                 .join("%20") + "%20";
             let text2 =
               allOldText
                 .slice(0, 120)
                 .replace(/['"]+/g, "")
+                .replace(/[^\x00-\x7F]/g, "")
+                .trim()
                 .split(" ")
                 .join("%20") + "%20";
             let similarity = await this.compareIdeas({ text1, text2 });
@@ -415,10 +738,8 @@ export default {
         newArr.push(allSimilarity.find((a) => a.similarity == Math.max(...b)));
       }
       console.log("This is the new array", newArr);
-
       let old;
       for (const load of this.convertedNewIdea) {
-        //   if (newArr.find(s=>s.newIdea==load.title).similarity > 0.5)
         let sim = newArr.find((s) => s.newIdea == load.title).similarity;
         if (sim > 0.5) {
           old = this.finalEvaluation.find(
@@ -459,17 +780,20 @@ export default {
       }
       console.log("This is the imported Ideas", this.importedIdea);
       for (let item of newArr) {
-        if (item.similarity != 0) {
-          this.arrowArray.push({
-            oldPosition: this.ideas.find((idea) => item.oldIdea === idea.title)
-              .position,
-            newPosition: this.importedIdea.find(
-              (im) => item.newIdea === im.title
-            ).position,
-            similarity: item.similarity,
-            oldIdea: item.oldIdea,
-            newIdea: item.newIdea,
-          });
+        if (item) {
+          if (item.similarity != 0) {
+            this.arrowArray.push({
+              oldPosition: this.ideas.find(
+                (idea) => item.oldIdea === idea.title
+              ).position,
+              newPosition: this.importedIdea.find(
+                (im) => item.newIdea === im.title
+              ).position,
+              similarity: item.similarity,
+              oldIdea: item.oldIdea,
+              newIdea: item.newIdea,
+            });
+          }
         }
       }
       console.log("This is the positions of old new ideas", this.arrowArray);
@@ -477,10 +801,15 @@ export default {
 
     onStart() {
       // First we need to check what is the evaluation of ideas based on all user's input
+      // Please uncomment this one after testing
       this.finalEvalMethod().then(async () => {
         this.sim = await this.similarityMethod();
         console.log("Here is inside onStart");
       });
+      // this.finalEvalMock().then(async () => {
+      //   this.sim = await this.similarityMethod();
+      //   console.log("Here is inside onStart");
+      // });
     },
     topicExtractor() {
       this.newIdeas.forEach((i) => {
@@ -568,7 +897,7 @@ export default {
   },
   updated() {
     this.initial++;
-    if (this.initial == 5) {
+    if (this.initial == 10) {
       this.fetchIdeas()
         .then(() => {
           this.onStart();

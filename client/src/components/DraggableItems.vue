@@ -212,7 +212,10 @@ export default {
         (idea) => idea._id === this.currentIdea._id
       );
       let newNovelanswers = [];
-      if (this.currentIdea.novelAnswers[0].toUpperCase().includes("IDEA")) {
+      if (
+        this.currentIdea.novelAnswers[0] &&
+        this.currentIdea.novelAnswers[0].toUpperCase().includes("IDEA")
+      ) {
         let titles = this.currentIdea.novelAnswers[0].split(",");
         titles.forEach((title) => {
           newNovelanswers.push(

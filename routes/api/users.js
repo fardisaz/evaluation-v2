@@ -285,6 +285,81 @@ router.get("/countNovelty", async (req, res) => {
     NovelAnswers: novelArr("Idea 5", ideas),
     NotNovelAnswers: antiNovelArr("Idea 5", ideas),
   });
+  res1 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 6", classification: "Novel" } },
+  });
+
+  res2 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 6", classification: "Not Novel" } },
+  });
+
+  arr.push({
+    title: "Idea 6",
+    Novel: res1,
+    NotNovel: res2,
+    NovelAnswers: novelArr("Idea 6", ideas),
+    NotNovelAnswers: antiNovelArr("Idea 6", ideas),
+  });
+  res1 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 7", classification: "Novel" } },
+  });
+
+  res2 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 7", classification: "Not Novel" } },
+  });
+
+  arr.push({
+    title: "Idea 7",
+    Novel: res1,
+    NotNovel: res2,
+    NovelAnswers: novelArr("Idea 7", ideas),
+    NotNovelAnswers: antiNovelArr("Idea 7", ideas),
+  });
+  res1 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 8", classification: "Novel" } },
+  });
+
+  res2 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 8", classification: "Not Novel" } },
+  });
+
+  arr.push({
+    title: "Idea 8",
+    Novel: res1,
+    NotNovel: res2,
+    NovelAnswers: novelArr("Idea 8", ideas),
+    NotNovelAnswers: antiNovelArr("Idea 8", ideas),
+  });
+  res1 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 9", classification: "Novel" } },
+  });
+
+  res2 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 9", classification: "Not Novel" } },
+  });
+
+  arr.push({
+    title: "Idea 9",
+    Novel: res1,
+    NotNovel: res2,
+    NovelAnswers: novelArr("Idea 9", ideas),
+    NotNovelAnswers: antiNovelArr("Idea 9", ideas),
+  });
+  res1 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 10", classification: "Novel" } },
+  });
+
+  res2 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 10", classification: "Not Novel" } },
+  });
+
+  arr.push({
+    title: "Idea 10",
+    Novel: res1,
+    NotNovel: res2,
+    NovelAnswers: novelArr("Idea 10", ideas),
+    NotNovelAnswers: antiNovelArr("Idea 10", ideas),
+  });
   const total = await User.count({});
 
   res.json({ total, arr });
@@ -299,18 +374,16 @@ router.post(
   "/similarity",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    let text1 = req.body.text1;
-    let text2 = req.body.text2;
-    const url = `https://api.dandelion.eu/datatxt/sim/v1/?text1=${text1}&text2=${text2}&token=943cd78b08354bd2b7d49669fc3d6ba3&lang=en`;
-    axios
-      .get(url)
-      .then((response) => {
-        console.log("this is the response: ", response.data);
-        res.send(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    try {
+      let text1 = req.body.text1;
+      let text2 = req.body.text2;
+      const url = `https://api.dandelion.eu/datatxt/sim/v1/?text1=${text1}&text2=${text2}&token=943cd78b08354bd2b7d49669fc3d6ba3&lang=en`;
+      let response = await axios.get(url);
+      console.log("this is the dandelion res:", response.data);
+      res.send(response.data);
+    } catch (error) {
+      throw error;
+    }
   }
 );
 

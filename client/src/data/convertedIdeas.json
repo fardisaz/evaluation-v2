@@ -1,0 +1,122 @@
+[
+  {
+    "classification": "",
+    "description": "It could be used for home security by monitoring your home and alerting to unknown people and motions.",
+    "extractedTopic": "home",
+    "extractedUrl": "",
+    "newDesc": ["Unknown", "Home", "Motion", "Home"],
+    "position": {
+      "left": 0,
+      "top": 0
+    },
+    "title": "Idea 1"
+  },
+  {
+    "classification": "",
+    "description": "Helping firefighters in ways to get into a house that is on fire. Which way they should go, and if anybody is inside.",
+    "extractedTopic": "fireman",
+    "extractedUrl": "",
+    "newDesc": ["Way", "Fire", "House", "Firefighter", "Anybody"],
+    "position": {
+      "left": 0,
+      "top": 0
+    },
+    "title": "Idea 2"
+  },
+  {
+    "classification": "",
+    "description": "It could help to identify and rescue people trapped in severe weather conditions.",
+    "extractedTopic": "people",
+    "extractedUrl": "",
+    "newDesc": ["Severe weather condition", "People"],
+    "position": {
+      "left": 0,
+      "top": 0
+    },
+    "title": "Idea 3"
+  },
+  {
+    "classification": "",
+    "description": "send it into a tornado or hurricane to help get pattern and weather data",
+    "extractedTopic": "tornado",
+    "extractedUrl": "",
+    "newDesc": ["Weather", "Tornado", "Pattern", "Hurricane"],
+    "position": {
+      "left": 0,
+      "top": 0
+    },
+    "title": "Idea 4"
+  },
+  {
+    "classification": "",
+    "description": "It could be useful in tracking criminals by recognizing their movement patterns.",
+    "extractedTopic": "no title",
+    "extractedUrl": "",
+    "newDesc": 1,
+    "position": {
+      "left": 0,
+      "top": 0
+    },
+    "title": "Idea 5"
+  },
+  {
+    "classification": "",
+    "description": "The technology can be used to locate people or animals in case of natural disaster.",
+    "extractedTopic": "natural catastrophe",
+    "extractedUrl": "",
+    "newDesc": ["Natural", "Case", "Animal", "People", "Technology"],
+    "position": {
+      "left": 0,
+      "top": 0
+    },
+    "title": "Idea 6"
+  },
+  {
+    "classification": "",
+    "description": "watch movement outside your house or business",
+    "extractedTopic": "home",
+    "extractedUrl": "",
+    "newDesc": ["House", "Busines", "Movement"],
+    "position": {
+      "left": 0,
+      "top": 0
+    },
+    "title": "Idea 7"
+  },
+  {
+    "classification": "",
+    "description": "This could be used as surveillance on humans or criminals, like with law enforcement.",
+    "extractedTopic": "Law Enforcement",
+    "extractedUrl": "",
+    "newDesc": ["Law", "Human", "Criminal", "Surveillance"],
+    "position": {
+      "left": 0,
+      "top": 0
+    },
+    "title": "Idea 8"
+  },
+  {
+    "classification": "",
+    "description": "check animal population in remote areas.",
+    "extractedTopic": "check",
+    "extractedUrl": "",
+    "newDesc": ["Animal", "Remote"],
+    "position": {
+      "left": 0,
+      "top": 0
+    },
+    "title": "Idea 9"
+  },
+  {
+    "classification": "",
+    "description": "It can track migration patterns of animals.",
+    "extractedTopic": "migration",
+    "extractedUrl": "",
+    "newDesc": ["Pattern", "Migration"],
+    "position": {
+      "left": 0,
+      "top": 0
+    },
+    "title": "Idea 10"
+  }
+]

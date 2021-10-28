@@ -1,0 +1,112 @@
+[
+  {
+    "classification": "Not Novel",
+    "descAndAnswers": ["Home", "Animal", "Unfamiliar", "People", "Alert"],
+    "description": "It can be used as a home security device. It can recognize the people and animal movements that are usually inside the home and alert when there is an unfamiliar movement.",
+    "notNovelAnswers": ["", "", ""],
+    "position": { "left": 1218, "top": 617 },
+    "title": "Idea 1"
+  },
+  {
+    "classification": "Not Novel",
+    "descAndAnswers": ["Potential", "Surveillance", "Better solution", "Cctv"],
+    "description": "It can be used for surveillance of potential criminals.",
+    "notNovelAnswers": [
+      "it's costly",
+      "there are already better solutions like CCTV",
+      ""
+    ],
+    "position": { "left": 1142, "top": 710 },
+    "title": "Idea 2"
+  },
+  {
+    "classification": "Not Novel",
+    "descAndAnswers": ["Movement", "Detect", "Gait"],
+    "description": "Detect criminals by their movement patterns such as their gait.",
+    "notNovelAnswers": [],
+    "position": { "left": 1386, "top": 615 },
+    "title": "Idea 3"
+  },
+  {
+    "classification": "Novel",
+    "descAndAnswers": ["Animal", "Precise"],
+    "description": "used to track animal populations",
+    "novelAnswers": ["Precise"],
+    "position": { "left": 309, "top": 308 },
+    "title": "Idea 4"
+  },
+  {
+    "classification": "Novel",
+    "descAndAnswers": ["Fire", "Firefighter", "Animal"],
+    "description": "Can help firefighters locate animals in a fire.",
+    "novelAnswers": ["Animal"],
+    "position": { "left": 312, "top": 190 },
+    "title": "Idea 5"
+  },
+  {
+    "classification": "Novel",
+    "descAndAnswers": [
+      "Severe weather event",
+      "Atmosphere",
+      "Tornado",
+      "Method",
+      "Natural disater"
+    ],
+    "description": "Could be used as a method of identifying when a tornado, or other severe weather event, begins to form in the atmosphere.",
+    "novelAnswers": ["Natural disater"],
+    "position": { "left": 75, "top": 145 },
+    "title": "Idea 6"
+  },
+  {
+    "classification": "Not Novel",
+    "descAndAnswers": ["Unknown", "Security", "Movement", "House", "Old idea"],
+    "description": "Use it as a security device to detect if unknown people are attempting to enter a house by looking at their movement patterns.",
+    "notNovelAnswers": ["old idea", "", ""],
+    "position": { "left": 1179, "top": 683 },
+    "title": "Idea 7"
+  },
+  {
+    "classification": "Not Novel",
+    "descAndAnswers": [
+      "Animal",
+      "Pet",
+      "Technology",
+      "Lot",
+      "Scene",
+      "Topic",
+      "Cause",
+      "Solution"
+    ],
+    "description": "Use the technology for pet cameras to track animal movement",
+    "notNovelAnswers": [
+      "A lot of works need to be done behind the scene.",
+      "Cause there are already RFID technologies exist.",
+      "Cause there are already some solutions for this topic"
+    ],
+    "position": { "left": 1275, "top": 633 },
+    "title": "Idea 8"
+  },
+  {
+    "classification": "Novel",
+    "descAndAnswers": ["Debris", "Search", "Rescue", "Movement"],
+    "description": "Use it in search and rescue to find movement in debris fields.",
+    "novelAnswers": [],
+    "position": { "left": 66, "top": 215 },
+    "title": "Idea 9"
+  },
+  {
+    "classification": "Novel",
+    "descAndAnswers": [
+      "Dangerous",
+      "Rescue operation",
+      "Search",
+      "Technology",
+      "Severe",
+      "People"
+    ],
+    "description": "The technology would be useful for search and rescue operations in dangerous geographical locations.",
+    "novelAnswers": ["Severe", "People"],
+    "position": { "left": 234, "top": 242 },
+    "title": "Idea 10"
+  }
+]
