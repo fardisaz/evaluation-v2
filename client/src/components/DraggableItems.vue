@@ -44,7 +44,7 @@
             name.Example:Idea 1,Idea 2,...)</span
           >
           <br />
-          <!-- <div v-for="item in checkboxValues" :key="item.description">
+          <div v-for="item in checkboxValues" :key="item.title">
             <div class="form-check" v-if="item.title != currentIdea.title">
               <input
                 class="form-check-input"
@@ -57,12 +57,12 @@
                 {{ item.description }}
               </label>
             </div>
-          </div> -->
-          <textarea
+          </div>
+          <!-- <textarea
             v-model="currentIdea.novelAnswers[0]"
             class="answerText"
             placeholder="add multiple lines"
-          ></textarea>
+          ></textarea> -->
         </div>
 
         <div class="questions">
@@ -226,32 +226,40 @@ export default {
         (idea) => idea._id === this.currentIdea._id
       );
       let newNovelanswers = [];
-      // for (let check in this.checkboxValues) {
-      //   if (check.checked) {
-      //     newNovelanswers.push(
-      //       this.currentIdea.novelAnswers[0].concat(check.description)
-      //     );
-      //   }
-      // }
-      if (
-        this.currentIdea.novelAnswers[0] &&
-        this.currentIdea.novelAnswers[0].toUpperCase().includes("IDEA")
-      ) {
-        let titles = this.currentIdea.novelAnswers[0].split(",");
-        titles.forEach((title) => {
-          newNovelanswers.push(
-            this.importedIdeas.find((idea) => idea.title == title).description
+
+      for (let item of this.checkboxValues) {
+        if (item.checked) {
+          this.currentIdea.novelAnswers[0] = item.description;
+          console.log(
+            "this is the description:",
+            this.currentIdea.novelAnswers[0]
           );
-        });
-      } else if (this.currentIdea.novelAnswers[0]) {
-        newNovelanswers.push(this.currentIdea.novelAnswers[0]);
+          newNovelanswers.push(item.description);
+        }
       }
-      newNovelanswers.push(this.currentIdea.novelAnswers[1]);
-      this.importedIdeas[index] = {
-        ...this.importedIdeas[index],
-        novelAnswers: newNovelanswers,
-        notNovelAnswers: ["", "", ""],
-      };
+      // if (
+      //   this.currentIdea.novelAnswers[0] &&
+      //   this.currentIdea.novelAnswers[0].toUpperCase().includes("IDEA")
+      // ) {
+      //   let titles = this.currentIdea.novelAnswers[0].split(",");
+      //   titles.forEach((title) => {
+      //     newNovelanswers.push(
+      //       this.importedIdeas.find((idea) => idea.title == title).description
+      //     );
+      //   });
+      // } else if (this.currentIdea.novelAnswers[0]) {
+      //   newNovelanswers.push(this.currentIdea.novelAnswers[0]);
+      // }
+      // newNovelanswers.push(this.currentIdea.novelAnswers[1]);
+      // this.importedIdeas[index] = {
+      //   ...this.importedIdeas[index],
+      //   novelAnswers: newNovelanswers,
+      //   notNovelAnswers: ["", "", ""],
+      // };
+      console.log(
+        "this is the imported[index] ",
+        this.importedIdeas[index].novelAnswers
+      );
     },
     closeAntiNovel() {
       this.antiNovelDialog = false;
@@ -370,7 +378,6 @@ export default {
         this.topicExtractor().then(() => {
           console.log("This is the imported", this.importedIdeas);
         });
-
         // this.importedIdeas = this.ideas;
       })
       .catch((err) => {
@@ -379,28 +386,30 @@ export default {
   },
   computed: {
     ...mapGetters(["ideas", "token", "newIdeas"]),
-    checkboxValues() {
-      let values = [];
-      for (let item of this.importedIdeas) {
-        if (
-          this.currentIdea.novelAnswers[0]
-            .split(".")
-            .find((a) => a == item.description)
-        ) {
-          values.push({
-            description: item.description,
-            checked: true,
-            title: item.title,
-          });
-        } else {
+    checkboxValues: {
+      // set(values) {
+      //   for (let item in values) {
+      //     if (item.checked) {
+      //       if (this.currentIdea.novelAnswers[0] == "") {
+      //         this.currentIdea.novelAnswers[0].concat(item.title);
+      //       } else {
+      //         this.currentIdea.novelAnswers[0].concat(",", item.title);
+      //       }
+      //     }
+      //   }
+      //   console.log("This is the novel:", this.currentIdea.novelAnswers[0]);
+      // },
+      get() {
+        let values = [];
+        for (let item of this.importedIdeas) {
           values.push({
             description: item.description,
             checked: false,
             title: item.title,
           });
         }
-      }
-      return values;
+        return values;
+      },
     },
   },
 };
