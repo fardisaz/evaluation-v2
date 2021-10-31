@@ -44,6 +44,20 @@
             name.Example:Idea 1,Idea 2,...)</span
           >
           <br />
+          <!-- <div v-for="item in checkboxValues" :key="item.description">
+            <div class="form-check" v-if="item.title != currentIdea.title">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                v-model="item.checked"
+                value="checkboxVal"
+                id="flexCheckDefault"
+              />
+              <label class="form-check-label" for="flexCheckDefault">
+                {{ item.description }}
+              </label>
+            </div>
+          </div> -->
           <textarea
             v-model="currentIdea.novelAnswers[0]"
             class="answerText"
@@ -212,6 +226,13 @@ export default {
         (idea) => idea._id === this.currentIdea._id
       );
       let newNovelanswers = [];
+      // for (let check in this.checkboxValues) {
+      //   if (check.checked) {
+      //     newNovelanswers.push(
+      //       this.currentIdea.novelAnswers[0].concat(check.description)
+      //     );
+      //   }
+      // }
       if (
         this.currentIdea.novelAnswers[0] &&
         this.currentIdea.novelAnswers[0].toUpperCase().includes("IDEA")
@@ -341,7 +362,6 @@ export default {
       }
     },
   },
-
   created() {
     //fetching the idea from user ideas model
     this.fetchIdeas()
@@ -357,7 +377,32 @@ export default {
         console.log(err);
       });
   },
-  computed: { ...mapGetters(["ideas", "token", "newIdeas"]) },
+  computed: {
+    ...mapGetters(["ideas", "token", "newIdeas"]),
+    checkboxValues() {
+      let values = [];
+      for (let item of this.importedIdeas) {
+        if (
+          this.currentIdea.novelAnswers[0]
+            .split(".")
+            .find((a) => a == item.description)
+        ) {
+          values.push({
+            description: item.description,
+            checked: true,
+            title: item.title,
+          });
+        } else {
+          values.push({
+            description: item.description,
+            checked: false,
+            title: item.title,
+          });
+        }
+      }
+      return values;
+    },
+  },
 };
 </script>
 

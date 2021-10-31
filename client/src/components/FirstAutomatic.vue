@@ -1,5 +1,15 @@
 <template>
   <div>
+    <base-dialog v-if="waitingDialog">
+      <template #default>
+        <div>
+          <p style="padding-left:5rem">
+            Please wait till the automatic evaluation will be calculated
+          </p>
+          <div class="dot-flashing"></div>
+        </div>
+      </template>
+    </base-dialog>
     <div>
       <filter-layout></filter-layout>
       <!-- Color reference -->
@@ -17,6 +27,27 @@
         >
           <div class="oldSign"></div>
           <p>Old Ideas</p>
+        </div>
+        <div
+          class="form-check"
+          style="display: inline-flex;
+  margin-right:1.5em;"
+        >
+          <input
+            class="form-check-input"
+            type="checkbox"
+            v-model="checked"
+            value="checkboxVal"
+            id="flexCheckDefault"
+            style="font-size:20px"
+          />
+          <label
+            class="form-check-label"
+            for="flexCheckDefault"
+            style="margin-left:0.25rem;padding-top:0.3rem"
+          >
+            Show only newIdeas
+          </label>
         </div>
       </div>
       <download
@@ -43,6 +74,7 @@
       </div>
       <div v-for="(idea, index) in ideas" :key="index">
         <draggable
+          v-if="!checked"
           class="oldIdeas"
           :id="index"
           :title="idea.title"
@@ -68,6 +100,7 @@
     <!-- This is for arrow connection between ideas -->
     <div v-for="(arrow, index) in arrowArray" :key="index">
       <connect-ideas
+        v-if="!checked"
         :oldLeft="arrow.oldPosition.left"
         :oldTop="arrow.oldPosition.top"
         :newLeft="arrow.newPosition.left"
@@ -86,6 +119,7 @@ import FilterLayout from "./layouts/FilterLayout.vue";
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import NewDraggable from "./NewDraggable.vue";
 import ConnectIdeas from "./ConnectIdeas.vue";
+// import { compareTwoStrings } from "../../node_modules/string-similarity/src/index";
 export default {
   components: {
     Download,
@@ -110,6 +144,8 @@ export default {
       newImportedIdeas: [],
       refreshPage: false,
       initial: 0,
+      checked: false,
+      waitingDialog: true,
     };
   },
   computed: { ...mapGetters(["ideas", "saved", "newIdeas"]) },
@@ -284,7 +320,7 @@ export default {
         // extract keys from description
         let newDesc = await this.extractKey(desc);
         if (newDesc == 1) {
-          newDesc = [];
+          newDesc = [""];
         }
         if (
           item.Novel > item.NotNovel &&
@@ -543,6 +579,7 @@ export default {
       let allSimilarity = [];
       let b = [];
       let newArr = [];
+      // Uncomment for none-testing conditions
       for (let item of this.newIdeas) {
         let newDesc = await this.extractKey(item.description);
         this.convertedNewIdea.push({
@@ -692,10 +729,9 @@ export default {
               let newText = await this.getDbpedia(newUrl);
               allNewText = allNewText.concat(" ").concat(newText.split(".")[0]);
             }
-            if (allNewText == "") {
-              allNewText = allNewText.concat(item.description);
-            }
             // console.log("This is allNewText: ", allNewText);
+          } else if (item.newDesc == 1) {
+            allNewText = allNewText.concat(item.description);
           }
           // for oldUrls you should try to give all the array member of final.descAndAnswers to dbpedia
           let allOldText = "";
@@ -727,6 +763,10 @@ export default {
                 .split(" ")
                 .join("%20") + "%20";
             let similarity = await this.compareIdeas({ text1, text2 });
+            // console.log("This is text1:", text1);
+            // console.log("This is text2:", text2);
+            // Levensteinlibrary
+            // let similarity = compareTwoStrings(text1, text2);
             allSimilarity.push({
               similarity,
               oldIdea: final.title,
@@ -735,16 +775,22 @@ export default {
             b.push(similarity);
           }
         }
+        // console.log("This is allSimilarity:", allSimilarity);
         newArr.push(allSimilarity.find((a) => a.similarity == Math.max(...b)));
       }
       console.log("This is the new array", newArr);
       let old;
       for (const load of this.convertedNewIdea) {
-        let sim = newArr.find((s) => s.newIdea == load.title).similarity;
+        let sim = newArr
+          .filter((p) => p != undefined)
+          .find((s) => s.newIdea == load.title).similarity;
         if (sim > 0.5) {
           old = this.finalEvaluation.find(
             (final) =>
-              final.title == newArr.find((s) => s.newIdea == load.title).oldIdea
+              final.title ==
+              newArr
+                .filter((p) => p != undefined)
+                .find((s) => s.newIdea == load.title).oldIdea
           );
 
           if (
@@ -779,7 +825,7 @@ export default {
         }
       }
       console.log("This is the imported Ideas", this.importedIdea);
-      for (let item of newArr) {
+      for (let item of newArr.filter((p) => p != undefined)) {
         if (item) {
           if (item.similarity != 0) {
             this.arrowArray.push({
@@ -805,10 +851,13 @@ export default {
       this.finalEvalMethod().then(async () => {
         this.sim = await this.similarityMethod();
         console.log("Here is inside onStart");
+        this.waitingDialog = false;
       });
+
       // this.finalEvalMock().then(async () => {
       //   this.sim = await this.similarityMethod();
       //   console.log("Here is inside onStart");
+      //   this.waitingDialog = false;
       // });
     },
     topicExtractor() {
@@ -998,5 +1047,57 @@ export default {
 }
 text {
   background-color: #c0ffc8;
+}
+.dot-flashing {
+  position: relative;
+  width: 10px;
+  height: 10px;
+  left: 18rem;
+  top: 0rem;
+  border-radius: 5px;
+  background-color: #3d9eec;
+  color: #3d9eec;
+  animation: dotFlashing 1s infinite linear alternate;
+  animation-delay: 0.5s;
+}
+
+.dot-flashing::before,
+.dot-flashing::after {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  top: 0;
+}
+
+.dot-flashing::before {
+  left: -15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #3d9eec;
+  color: #3d9eec;
+  animation: dotFlashing 1s infinite alternate;
+  animation-delay: 0s;
+}
+
+.dot-flashing::after {
+  left: 15px;
+  width: 10px;
+  height: 10px;
+  border-radius: 5px;
+  background-color: #3d9eec;
+  color: #3d9eec;
+  animation: dotFlashing 1s infinite alternate;
+  animation-delay: 1s;
+}
+
+@keyframes dotFlashing {
+  0% {
+    background-color: #3d9eec;
+  }
+  50%,
+  100% {
+    background-color: #ebe6ff;
+  }
 }
 </style>

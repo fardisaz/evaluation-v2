@@ -43,7 +43,7 @@ export default {
 }
 dialog {
   position: fixed;
-  top: 10vh;
+  top: 2vh;
   left: 10%;
   width: 80%;
   z-index: 100;
