@@ -4,7 +4,21 @@
     <dialog open>
       <header>
         <slot name="header">
-          <h2>{{ title }}</h2>
+          <span
+            class="d-inline-block"
+            tabindex="0"
+            data-toggle="tooltip"
+            :title="description"
+          >
+            <button
+              class="btn btn-light btn-lg"
+              style="pointer-events: auto;"
+              type="button"
+              disabled
+            >
+              {{ title }}
+            </button>
+          </span>
         </slot>
       </header>
       <section>
@@ -23,6 +37,10 @@
 export default {
   props: {
     title: {
+      type: String,
+      required: false,
+    },
+    description: {
       type: String,
       required: false,
     },

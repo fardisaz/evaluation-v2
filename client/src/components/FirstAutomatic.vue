@@ -1,6 +1,6 @@
 <template>
   <div>
-    <base-dialog v-if="waitingDialog">
+    <base-dialog v-if="waitingDialog" title="Processing">
       <template #default>
         <div>
           <p style="padding-left:5rem">
@@ -314,6 +314,8 @@ export default {
     },
     async finalEvalMethod() {
       let totalEval = await this.countNovelty();
+      let novelLeft = 42;
+      let notNovelLeft = 940;
       for (let item of totalEval.arr) {
         let desc = this.ideas.find((idea) => idea.title == item.title)
           .description;
@@ -322,37 +324,16 @@ export default {
         if (newDesc == 1) {
           newDesc = [""];
         }
+
         if (
           item.Novel > item.NotNovel &&
           (totalEval.total == item.Novel + item.NotNovel ||
             item.Novel > totalEval.total - item.Novel)
         ) {
-          // let desc = this.ideas.find((idea) => idea.title == item.title)
-          //   .description;
-          // // extract keys from description
-          // let newDesc;
-
           //extract keys from array of novel answers
-
           let exKeys = await this.answerKeys(item.NovelAnswers);
-          let randomLeft = 0;
-          let randomTop = 0;
-          randomLeft = this.randomIntFromInterval(42, 450);
-          while (
-            this.ideas.forEach((idea) => {
-              Math.abs(randomLeft - idea.position.left) <= 90;
-            })
-          ) {
-            randomLeft += 160;
-          }
-          randomTop = this.randomIntFromInterval(104, 335);
-          while (
-            this.ideas.forEach((idea) => {
-              Math.abs(randomTop - idea.position.top) <= 90;
-            })
-          ) {
-            randomTop += 160;
-          }
+          
+
           this.finalEvaluation.push({
             classification: "Novel",
             title: item.title,
@@ -360,38 +341,18 @@ export default {
             description: desc,
             descAndAnswers: [...new Set(newDesc.concat(exKeys))],
             position: {
-              left: randomLeft,
-              top: randomTop,
+              left: novelLeft,
+              top: 335,
             },
           });
+          novelLeft += 160;
         } else if (
           item.NotNovel > item.Novel &&
           (totalEval.total == item.Novel + item.NotNovel ||
             item.NotNovel > totalEval.total - item.NotNovel)
         ) {
-          // let desc = this.ideas.find((idea) => idea.title == item.title)
-          //   .description;
-          // let newDesc = await this.extractKey(desc);
-
           let exKeys = await this.answerKeys(item.NotNovelAnswers);
-          let randomLeft = 0;
-          let randomTop = 0;
-          randomLeft = this.randomIntFromInterval(1000, 1410);
-          while (
-            this.ideas.forEach((idea) => {
-              Math.abs(randomLeft - idea.position.left) <= 90;
-            })
-          ) {
-            randomLeft -= 160;
-          }
-          randomTop = this.randomIntFromInterval(595, 800);
-          while (
-            this.ideas.forEach((idea) => {
-              Math.abs(randomTop - idea.position.top) <= 90;
-            })
-          ) {
-            randomTop -= 160;
-          }
+        
           this.finalEvaluation.push({
             classification: "Not Novel",
             title: item.title,
@@ -399,14 +360,13 @@ export default {
             description: desc,
             descAndAnswers: [...new Set(newDesc.concat(exKeys))],
             position: {
-              left: randomLeft,
-              top: randomTop,
+              left: notNovelLeft,
+              top: 595,
             },
           });
+          notNovelLeft += 160;
         } else {
-          // let desc = this.ideas.find((idea) => idea.title == item.title)
-          //   .description;
-          // let newDesc = await this.extractKey(desc);
+         
           let randomLeft = 0;
           let randomTop = 0;
           randomLeft = this.randomIntFromInterval(455, 995);
@@ -827,7 +787,7 @@ export default {
       console.log("This is the imported Ideas", this.importedIdea);
       for (let item of newArr.filter((p) => p != undefined)) {
         if (item) {
-          if (item.similarity != 0) {
+          if (item.similarity != 0 && item.similarity > 0.5) {
             this.arrowArray.push({
               oldPosition: this.ideas.find(
                 (idea) => item.oldIdea === idea.title

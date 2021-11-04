@@ -26,23 +26,14 @@
       </template>
     </base-dialog>
     <!-- Novel Ideas Dialog -->
-    <base-dialog v-if="novelDialog" :title="currentIdea.title">
+    <base-dialog
+      v-if="novelDialog"
+      :title="currentIdea.title"
+      :description="currentIdea.description"
+    >
       <template #default>
-        <!-- <div class="questions">
-          <span class="question">What is the limitation of other ideas?</span>
-          <br />
-          <textarea
-            class="answerText"
-            v-model="currentIdea.novelAnswers[0]"
-            placeholder="add multiple lines"
-          ></textarea>
-        </div> -->
-
         <div class="questions">
-          <span
-            >What are the ideas included in this idea?(Please write the title
-            name.Example:Idea 1,Idea 2,...)</span
-          >
+          <span>What are the ideas included in this idea?</span>
           <br />
           <div v-for="item in checkboxValues" :key="item.title">
             <div class="form-check" v-if="item.title != currentIdea.title">
@@ -58,11 +49,6 @@
               </label>
             </div>
           </div>
-          <!-- <textarea
-            v-model="currentIdea.novelAnswers[0]"
-            class="answerText"
-            placeholder="add multiple lines"
-          ></textarea> -->
         </div>
 
         <div class="questions">
@@ -71,7 +57,7 @@
           <textarea
             v-model="currentIdea.novelAnswers[1]"
             class="answerText"
-            placeholder="add multiple lines"
+            placeholder="Please write a short answer"
           ></textarea>
         </div>
       </template>
@@ -80,7 +66,11 @@
       </template>
     </base-dialog>
     <!-- Not Novel Ideas Dialog -->
-    <base-dialog v-if="antiNovelDialog" :title="currentIdea.title">
+    <base-dialog
+      v-if="antiNovelDialog"
+      :title="currentIdea.title"
+      :description="currentIdea.description"
+    >
       <template #default>
         <div class="questions">
           <span>What is the limitation of this idea?</span>
@@ -109,15 +99,6 @@
             placeholder="add multiple lines"
           ></textarea>
         </div>
-        <!-- <div class="questions">
-          <span>Can you name similar idea(s) that already exist here?</span>
-          <br />
-          <textarea
-            v-model="currentIdea.notNovelAnswers[3]"
-            class="answerText"
-            placeholder="add multiple lines"
-          ></textarea>
-        </div> -->
       </template>
       <template #actions>
         <button @click="closeAntiNovel">Okay</button>
@@ -237,25 +218,13 @@ export default {
           newNovelanswers.push(item.description);
         }
       }
-      // if (
-      //   this.currentIdea.novelAnswers[0] &&
-      //   this.currentIdea.novelAnswers[0].toUpperCase().includes("IDEA")
-      // ) {
-      //   let titles = this.currentIdea.novelAnswers[0].split(",");
-      //   titles.forEach((title) => {
-      //     newNovelanswers.push(
-      //       this.importedIdeas.find((idea) => idea.title == title).description
-      //     );
-      //   });
-      // } else if (this.currentIdea.novelAnswers[0]) {
-      //   newNovelanswers.push(this.currentIdea.novelAnswers[0]);
-      // }
-      // newNovelanswers.push(this.currentIdea.novelAnswers[1]);
-      // this.importedIdeas[index] = {
-      //   ...this.importedIdeas[index],
-      //   novelAnswers: newNovelanswers,
-      //   notNovelAnswers: ["", "", ""],
-      // };
+      newNovelanswers.push(this.currentIdea.novelAnswers[1]);
+      this.importedIdeas[index] = {
+        ...this.importedIdeas[index],
+        novelAnswers: newNovelanswers,
+        notNovelAnswers: ["", "", ""],
+      };
+
       console.log(
         "this is the imported[index] ",
         this.importedIdeas[index].novelAnswers
@@ -283,19 +252,23 @@ export default {
       };
       this.currentIdea = this.importedIdeas[index];
       if (104 < y && y < 335 && 42 < x && x < 450) {
-        this.novelDialog = true;
-        this.importedIdeas[index] = {
-          ...this.importedIdeas[index],
-          classification: "Novel",
-          notNovelAnswers: ["", "", ""],
-        };
-      } else if (595 < y && y < 800 && 1000 < x && x < 1410) {
-        this.antiNovelDialog = true;
-        this.importedIdeas[index] = {
-          ...this.importedIdeas[index],
-          classification: "Not Novel",
-          novelAnswers: ["", ""],
-        };
+        if (this.importedIdeas[index].classification != "Novel") {
+          this.novelDialog = true;
+          this.importedIdeas[index] = {
+            ...this.importedIdeas[index],
+            classification: "Novel",
+            notNovelAnswers: ["", "", ""],
+          };
+        }
+      } else if (595 < y && y < 800 && 994 < x && x < 1410) {
+        if (this.importedIdeas[index].classification != "Not Novel") {
+          this.antiNovelDialog = true;
+          this.importedIdeas[index] = {
+            ...this.importedIdeas[index],
+            classification: "Not Novel",
+            novelAnswers: ["", ""],
+          };
+        }
       } else {
         this.importedIdeas[index] = {
           ...this.importedIdeas[index],
@@ -435,7 +408,7 @@ export default {
 .answerText {
   margin-top: 0.5rem;
   width: 37rem;
-  height: 4rem;
+  height: 3rem;
 }
 .btnPosition {
   color: #fff !important;
