@@ -51,7 +51,7 @@
         </div>
       </div>
       <download
-        :download-data="ideas"
+        :download-data="importedIdea"
         file-type="json"
         file-name="Ideas"
         class="periodic_table"
@@ -316,6 +316,7 @@ export default {
       let totalEval = await this.countNovelty();
       let novelLeft = 42;
       let notNovelLeft = 940;
+      let noneTop = 115;
       for (let item of totalEval.arr) {
         let desc = this.ideas.find((idea) => idea.title == item.title)
           .description;
@@ -332,7 +333,6 @@ export default {
         ) {
           //extract keys from array of novel answers
           let exKeys = await this.answerKeys(item.NovelAnswers);
-          
 
           this.finalEvaluation.push({
             classification: "Novel",
@@ -352,7 +352,7 @@ export default {
             item.NotNovel > totalEval.total - item.NotNovel)
         ) {
           let exKeys = await this.answerKeys(item.NotNovelAnswers);
-        
+
           this.finalEvaluation.push({
             classification: "Not Novel",
             title: item.title,
@@ -366,35 +366,17 @@ export default {
           });
           notNovelLeft += 160;
         } else {
-         
-          let randomLeft = 0;
-          let randomTop = 0;
-          randomLeft = this.randomIntFromInterval(455, 995);
-          while (
-            this.ideas.forEach((idea) => {
-              Math.abs(randomLeft - idea.position.left) <= 90;
-            })
-          ) {
-            randomLeft -= 160;
-          }
-          randomTop = this.randomIntFromInterval(1340, 590);
-          while (
-            this.ideas.forEach((idea) => {
-              Math.abs(randomTop - idea.position.top) <= 90;
-            })
-          ) {
-            randomTop += 160;
-          }
           this.finalEvaluation.push({
             classification: "",
             title: item.title,
             description: desc,
             descAndAnswers: newDesc,
             position: {
-              left: randomLeft,
-              top: randomTop,
+              left: 705,
+              top: noneTop,
             },
           });
+          noneTop += 80;
         }
       }
       console.log("This is the finalEvaluation: ", this.finalEvaluation);

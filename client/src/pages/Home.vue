@@ -26,7 +26,7 @@
       </p>
       <p class="card-text">
         - Afterwards, you can save your evaluation and import the second txt
-        file and let the system does the evaluation for you.
+        file and let the system do the evaluation for you.
       </p>
       <p class="card-text">
         - At the end ,the automatic evaluation of last-imported ideas will be

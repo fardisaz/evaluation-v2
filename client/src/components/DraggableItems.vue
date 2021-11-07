@@ -113,6 +113,7 @@
       Save Evaluation
     </button>
     <file-reader
+      v-show="!autoBtn"
       @load="autoEval"
       class="btn evalBtn"
       title="Automatic Evaluation"
@@ -158,6 +159,7 @@ export default {
       antiNovelTitle: null,
       currentIdea: null,
       toast: false,
+      autoBtn: true,
     };
   },
   methods: {
@@ -181,6 +183,7 @@ export default {
       console.log(this.ideas);
       this.UPDATE_SAVED(true);
       this.toast = true;
+      this.autoBtn = false;
     },
     closeAlert() {
       this.toast = false;
