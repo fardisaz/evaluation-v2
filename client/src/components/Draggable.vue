@@ -5,9 +5,6 @@
       @mousedown="dragMouseDown"
       @dblclick="$emit('openDialog', title, description)"
     >
-      <!-- <p>
-        {{ extractedTopic }}
-      </p> -->
       <div class="myImage">
         <img
           :src="picture"
@@ -87,16 +84,11 @@ export default {
       document.onmousemove = null;
     },
     calcPosOfBox() {
-      //const boxABB = this.$refs['draggableContainer'].getBoundingClientRect();
       this.$refs["draggableContainer"].style.left = this.left - 25 + "px";
       this.$refs["draggableContainer"].style.top = this.top - 35 + "px";
-      // d.style.left = 50 + "px";
-      // d.style.top = 50 + "px";
-      //console.log(boxABB);
     },
     async wiki(topic) {
       var url = "https://en.wikipedia.org/w/api.php";
-
       var params = {
         action: "query",
         format: "json",
@@ -116,8 +108,10 @@ export default {
         })
         .then(function(response) {
           var images = response.query.allimages;
-          // console.log(images[1].url);
-          return images[1].url;
+          let min = 0;
+          let max = images.length - 1;
+          let ran = Math.floor(Math.random() * (max - min + 1) + min);
+          return images[ran].url;
         })
         .catch(function(error) {
           console.log(error);

@@ -154,7 +154,6 @@ router.patch(
             "ideas.$.position": req.body.position,
             "ideas.$.classification": req.body.classification,
             "ideas.$.extractedTopic": req.body.extractedTopic,
-            "ideas.$.extractedUrl": req.body.extractedUrl,
           },
         },
         (error, result) => {
@@ -442,7 +441,6 @@ router.patch(
             "newIdeas.$.position": req.body.position,
             "newIdeas.$.classification": req.body.classification,
             "newIdeas.$.extractedTopic": req.body.extractedTopic,
-            "newIdeas.$.extractedUrl": req.body.extractedUrl,
           },
         },
         (error, result) => {

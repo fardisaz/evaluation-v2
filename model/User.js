@@ -26,13 +26,7 @@ const IdeaSchema = new Schema({
     type: Array,
     required: false,
   },
-  similarIdeas: {
-    type: Array,
-  },
   extractedTopic: {
-    type: String,
-  },
-  extractedUrl: {
     type: String,
   },
 });
@@ -69,9 +63,7 @@ UserSchema.pre("save", function (next) {
     classification: "",
     novelAnswers: ["", ""],
     notNovelAnswers: ["", "", ""],
-    similarIdeas: [],
     extractedTopic: "",
-    extractedUrl: "",
   });
   this.ideas.push({
     title: "Idea 2",
@@ -83,9 +75,7 @@ UserSchema.pre("save", function (next) {
     classification: "",
     novelAnswers: ["", ""],
     notNovelAnswers: ["", "", ""],
-    similarIdeas: [],
     extractedTopic: "",
-    extractedUrl: "",
   });
   this.ideas.push({
     title: "Idea 3",
@@ -97,9 +87,7 @@ UserSchema.pre("save", function (next) {
     classification: "",
     novelAnswers: ["", ""],
     notNovelAnswers: ["", "", ""],
-    similarIdeas: [],
     extractedTopic: "",
-    extractedUrl: "",
   });
   this.ideas.push({
     title: "Idea 4",
@@ -111,9 +99,7 @@ UserSchema.pre("save", function (next) {
     classification: "",
     novelAnswers: ["", ""],
     notNovelAnswers: ["", "", ""],
-    similarIdeas: [],
     extractedTopic: "",
-    extractedUrl: "",
   });
   this.ideas.push({
     title: "Idea 5",
@@ -125,9 +111,7 @@ UserSchema.pre("save", function (next) {
     classification: "",
     novelAnswers: ["", ""],
     notNovelAnswers: ["", "", ""],
-    similarIdeas: [],
     extractedTopic: "",
-    extractedUrl: "",
   });
   this.ideas.push({
     title: "Idea 6",
@@ -139,9 +123,7 @@ UserSchema.pre("save", function (next) {
     classification: "",
     novelAnswers: ["", ""],
     notNovelAnswers: ["", "", ""],
-    similarIdeas: [],
     extractedTopic: "",
-    extractedUrl: "",
   });
   this.ideas.push({
     title: "Idea 7",
@@ -153,9 +135,7 @@ UserSchema.pre("save", function (next) {
     classification: "",
     novelAnswers: ["", ""],
     notNovelAnswers: ["", "", ""],
-    similarIdeas: [],
     extractedTopic: "",
-    extractedUrl: "",
   });
   this.ideas.push({
     title: "Idea 8",
@@ -167,9 +147,7 @@ UserSchema.pre("save", function (next) {
     classification: "",
     novelAnswers: ["", ""],
     notNovelAnswers: ["", "", ""],
-    similarIdeas: [],
     extractedTopic: "",
-    extractedUrl: "",
   });
   this.ideas.push({
     title: "Idea 9",
@@ -181,9 +159,7 @@ UserSchema.pre("save", function (next) {
     classification: "",
     novelAnswers: ["", ""],
     notNovelAnswers: ["", "", ""],
-    similarIdeas: [],
     extractedTopic: "",
-    extractedUrl: "",
   });
   this.ideas.push({
     title: "Idea 10",
@@ -195,9 +171,7 @@ UserSchema.pre("save", function (next) {
     classification: "",
     novelAnswers: ["", ""],
     notNovelAnswers: ["", "", ""],
-    similarIdeas: [],
     extractedTopic: "",
-    extractedUrl: "",
   });
   this.newIdeas.push({
     title: "Idea 1",
@@ -208,7 +182,6 @@ UserSchema.pre("save", function (next) {
     description: "",
     classification: "",
     extractedTopic: "",
-    extractedUrl: "",
   });
   this.newIdeas.push({
     title: "Idea 2",
@@ -219,7 +192,6 @@ UserSchema.pre("save", function (next) {
     description: "",
     classification: "",
     extractedTopic: "",
-    extractedUrl: "",
   });
   this.newIdeas.push({
     title: "Idea 3",
@@ -230,7 +202,6 @@ UserSchema.pre("save", function (next) {
     description: "",
     classification: "",
     extractedTopic: "",
-    extractedUrl: "",
   });
   this.newIdeas.push({
     title: "Idea 4",
@@ -241,7 +212,6 @@ UserSchema.pre("save", function (next) {
     description: "",
     classification: "",
     extractedTopic: "",
-    extractedUrl: "",
   });
   this.newIdeas.push({
     title: "Idea 5",
@@ -252,7 +222,6 @@ UserSchema.pre("save", function (next) {
     description: "",
     classification: "",
     extractedTopic: "",
-    extractedUrl: "",
   });
   this.newIdeas.push({
     title: "Idea 6",
@@ -263,7 +232,6 @@ UserSchema.pre("save", function (next) {
     description: "",
     classification: "",
     extractedTopic: "",
-    extractedUrl: "",
   });
   this.newIdeas.push({
     title: "Idea 7",
@@ -274,7 +242,6 @@ UserSchema.pre("save", function (next) {
     description: "",
     classification: "",
     extractedTopic: "",
-    extractedUrl: "",
   });
   this.newIdeas.push({
     title: "Idea 8",
@@ -285,7 +252,6 @@ UserSchema.pre("save", function (next) {
     description: "",
     classification: "",
     extractedTopic: "",
-    extractedUrl: "",
   });
   this.newIdeas.push({
     title: "Idea 9",
@@ -296,7 +262,6 @@ UserSchema.pre("save", function (next) {
     description: "",
     classification: "",
     extractedTopic: "",
-    extractedUrl: "",
   });
   this.newIdeas.push({
     title: "Idea 10",
@@ -307,7 +272,6 @@ UserSchema.pre("save", function (next) {
     description: "",
     classification: "",
     extractedTopic: "",
-    extractedUrl: "",
   });
   next();
 });
