@@ -144,7 +144,7 @@ export default {
       newImportedIdeas: [],
       refreshPage: false,
       initial: 0,
-      checked: false,
+      checked: true,
       waitingDialog: true,
     };
   },
@@ -207,10 +207,8 @@ export default {
           }
         );
         let data = await res.json();
-
         if (data.length > 0 && data[0] && data[0].extractions.length > 0) {
           // console.log("This is the data:", data[0]);
-
           data[0].extractions.forEach((item) =>
             allKeys.push(item.parsed_value)
           );
@@ -233,7 +231,7 @@ export default {
             newAllkeys.push(this.capitalize(exKey));
           }
         });
-        console.log("This is newAllKeys: ", newAllkeys);
+        // console.log("This is newAllKeys: ", newAllkeys);
         return newAllkeys;
       } catch (err) {
         if (err.code == "CONCURRENCY_RATE_LIMIT") {
@@ -255,8 +253,8 @@ export default {
       let input = JSON.stringify(item);
       var query =
         "" +
-        "prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#>\n" +
-        "PREFIX dbo:     <http://dbpedia.org/ontology/>" +
+        "prefix rdfs:<http://www.w3.org/2000/01/rdf-schema#>\n" +
+        "PREFIX dbo:<http://dbpedia.org/ontology/>" +
         "\n" +
         "select distinct ?label ?comment ?type where {\n" +
         `  ?resource rdfs:label ${input}@en.\n` +
@@ -269,29 +267,19 @@ export default {
       // console.log("query: ", query);
       var queryUrl =
         url + "?query=" + encodeURIComponent(query) + "&format=json";
-      // console.log("This is the queryUrl for dbpedia: ", queryUrl);
       return queryUrl;
     },
     async getDbpedia(url) {
       // Storing response
       const response = await fetch(url);
-
       // Storing data in form of JSON
       var data = await response.json();
       if (data.results.bindings.length <= 0) {
         // console.log("Nothing found on dbpedia");
         return "";
       } else {
-        // console.log(
-        //   "This is the data from dbpedia: ",
-        //   data.results.bindings[0].comment.value
-        // );
         return data.results.bindings[0].comment.value;
       }
-
-      // if (response) {
-
-      // }
     },
     async answerKeys(items) {
       let newItems = [...new Set(items)];
@@ -325,7 +313,6 @@ export default {
         if (newDesc == 1) {
           newDesc = [""];
         }
-
         if (
           item.Novel > item.NotNovel &&
           (totalEval.total == item.Novel + item.NotNovel ||
@@ -529,135 +516,6 @@ export default {
           newDesc,
         });
       }
-      // this.convertedNewIdea = [
-      //   {
-      //     classification: "",
-      //     description:
-      //       "It could be used for home security by monitoring your home and alerting to unknown people and motions.",
-      //     extractedTopic: "home",
-      //     extractedUrl: "",
-      //     newDesc: ["Unknown", "Home", "Motion", "Home"],
-      //     position: {
-      //       left: 0,
-      //       top: 0,
-      //     },
-      //     title: "Idea 1",
-      //   },
-      //   {
-      //     classification: "",
-      //     description:
-      //       "Helping firefighters in ways to get into a house that is on fire. Which way they should go, and if anybody is inside.",
-      //     extractedTopic: "fireman",
-      //     extractedUrl: "",
-      //     newDesc: ["Way", "Fire", "House", "Firefighter", "Anybody"],
-      //     position: {
-      //       left: 0,
-      //       top: 0,
-      //     },
-      //     title: "Idea 2",
-      //   },
-      //   {
-      //     classification: "",
-      //     description:
-      //       "It could help to identify and rescue people trapped in severe weather conditions.",
-      //     extractedTopic: "people",
-      //     extractedUrl: "",
-      //     newDesc: ["Severe weather condition", "People"],
-      //     position: {
-      //       left: 0,
-      //       top: 0,
-      //     },
-      //     title: "Idea 3",
-      //   },
-      //   {
-      //     classification: "",
-      //     description:
-      //       "send it into a tornado or hurricane to help get pattern and weather data",
-      //     extractedTopic: "tornado",
-      //     extractedUrl: "",
-      //     newDesc: ["Weather", "Tornado", "Pattern", "Hurricane"],
-      //     position: {
-      //       left: 0,
-      //       top: 0,
-      //     },
-      //     title: "Idea 4",
-      //   },
-      //   {
-      //     classification: "",
-      //     description:
-      //       "It could be useful in tracking criminals by recognizing their movement patterns.",
-      //     extractedTopic: "no title",
-      //     extractedUrl: "",
-      //     newDesc: 1,
-      //     position: {
-      //       left: 0,
-      //       top: 0,
-      //     },
-      //     title: "Idea 5",
-      //   },
-      //   {
-      //     classification: "",
-      //     description:
-      //       "The technology can be used to locate people or animals in case of natural disaster.",
-      //     extractedTopic: "natural catastrophe",
-      //     extractedUrl: "",
-      //     newDesc: ["Natural", "Case", "Animal", "People", "Technology"],
-      //     position: {
-      //       left: 0,
-      //       top: 0,
-      //     },
-      //     title: "Idea 6",
-      //   },
-      //   {
-      //     classification: "",
-      //     description: "watch movement outside your house or business",
-      //     extractedTopic: "home",
-      //     extractedUrl: "",
-      //     newDesc: ["House", "Busines", "Movement"],
-      //     position: {
-      //       left: 0,
-      //       top: 0,
-      //     },
-      //     title: "Idea 7",
-      //   },
-      //   {
-      //     classification: "",
-      //     description:
-      //       "This could be used as surveillance on humans or criminals, like with law enforcement.",
-      //     extractedTopic: "Law Enforcement",
-      //     extractedUrl: "",
-      //     newDesc: ["Law", "Human", "Criminal", "Surveillance"],
-      //     position: {
-      //       left: 0,
-      //       top: 0,
-      //     },
-      //     title: "Idea 8",
-      //   },
-      //   {
-      //     classification: "",
-      //     description: "check animal population in remote areas.",
-      //     extractedTopic: "check",
-      //     extractedUrl: "",
-      //     newDesc: ["Animal", "Remote"],
-      //     position: {
-      //       left: 0,
-      //       top: 0,
-      //     },
-      //     title: "Idea 9",
-      //   },
-      //   {
-      //     classification: "",
-      //     description: "It can track migration patterns of animals.",
-      //     extractedTopic: "migration",
-      //     extractedUrl: "",
-      //     newDesc: ["Pattern", "Migration"],
-      //     position: {
-      //       left: 0,
-      //       top: 0,
-      //     },
-      //     title: "Idea 10",
-      //   },
-      // ];
       console.log("This is the converetedNewIdea: ", this.convertedNewIdea);
       //  compare each new idea with old idea to get the most similar one
       for (const item of this.convertedNewIdea) {
@@ -683,11 +541,9 @@ export default {
               let oldText = await this.getDbpedia(oldUrl);
               allOldText = allOldText.concat(" ").concat(oldText.split(".")[0]);
             }
-            // console.log("This is allOldText: ", allOldText);
           }
-          // From here we comment it!!!!
+
           if (allNewText && allOldText) {
-            console.log("This is inside the similarity api");
             let text1 =
               allNewText
                 .slice(0, 120)
@@ -789,18 +645,10 @@ export default {
 
     onStart() {
       // First we need to check what is the evaluation of ideas based on all user's input
-      // Please uncomment this one after testing
       this.finalEvalMethod().then(async () => {
         this.sim = await this.similarityMethod();
-        console.log("Here is inside onStart");
         this.waitingDialog = false;
       });
-
-      // this.finalEvalMock().then(async () => {
-      //   this.sim = await this.similarityMethod();
-      //   console.log("Here is inside onStart");
-      //   this.waitingDialog = false;
-      // });
     },
     topicExtractor() {
       this.newIdeas.forEach((i) => {
@@ -888,7 +736,7 @@ export default {
   },
   updated() {
     this.initial++;
-    if (this.initial == 10) {
+    if (this.initial == 15) {
       this.fetchIdeas()
         .then(() => {
           this.onStart();

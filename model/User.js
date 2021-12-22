@@ -173,6 +173,67 @@ UserSchema.pre("save", function (next) {
     notNovelAnswers: ["", "", ""],
     extractedTopic: "",
   });
+  this.ideas.push({
+    title: "Idea 11",
+    position: {
+      left: 1190,
+      top: 350,
+    },
+    description: "",
+    classification: "",
+    novelAnswers: ["", ""],
+    notNovelAnswers: ["", "", ""],
+    extractedTopic: "",
+  });
+  this.ideas.push({
+    title: "Idea 12",
+    position: {
+      left: 1170,
+      top: 200,
+    },
+    description: "",
+    classification: "",
+    novelAnswers: ["", ""],
+    notNovelAnswers: ["", "", ""],
+    extractedTopic: "",
+  });
+  this.ideas.push({
+    title: "Idea 13",
+    position: {
+      left: 765,
+      top: 85,
+    },
+    description: "",
+    classification: "",
+    novelAnswers: ["", ""],
+    notNovelAnswers: ["", "", ""],
+    extractedTopic: "",
+  });
+  this.ideas.push({
+    title: "Idea 14",
+    position: {
+      left: 600,
+      top: 150,
+    },
+    description: "",
+    classification: "",
+    novelAnswers: ["", ""],
+    notNovelAnswers: ["", "", ""],
+    extractedTopic: "",
+  });
+  this.ideas.push({
+    title: "Idea 15",
+    position: {
+      left: 650,
+      top: 600,
+    },
+    description: "",
+    classification: "",
+    novelAnswers: ["", ""],
+    notNovelAnswers: ["", "", ""],
+    extractedTopic: "",
+  });
+  // New ideas
   this.newIdeas.push({
     title: "Idea 1",
     position: {
@@ -265,6 +326,56 @@ UserSchema.pre("save", function (next) {
   });
   this.newIdeas.push({
     title: "Idea 10",
+    position: {
+      left: 0,
+      top: 0,
+    },
+    description: "",
+    classification: "",
+    extractedTopic: "",
+  });
+  this.newIdeas.push({
+    title: "Idea 11",
+    position: {
+      left: 0,
+      top: 0,
+    },
+    description: "",
+    classification: "",
+    extractedTopic: "",
+  });
+  this.newIdeas.push({
+    title: "Idea 12",
+    position: {
+      left: 0,
+      top: 0,
+    },
+    description: "",
+    classification: "",
+    extractedTopic: "",
+  });
+  this.newIdeas.push({
+    title: "Idea 13",
+    position: {
+      left: 0,
+      top: 0,
+    },
+    description: "",
+    classification: "",
+    extractedTopic: "",
+  });
+  this.newIdeas.push({
+    title: "Idea 14",
+    position: {
+      left: 0,
+      top: 0,
+    },
+    description: "",
+    classification: "",
+    extractedTopic: "",
+  });
+  this.newIdeas.push({
+    title: "Idea 15",
     position: {
       left: 0,
       top: 0,

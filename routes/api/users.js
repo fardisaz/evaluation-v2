@@ -107,7 +107,6 @@ router.patch(
   "/import",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
-    const descs = req.body.descriptions;
     const ideas = req.user.ideas;
     try {
       ideas.forEach((idea, index) => {
@@ -122,12 +121,10 @@ router.patch(
             if (error) {
               res.status(500).send();
             }
-            // res.send(result);
             console.log(result);
           }
         );
       });
-      //res.send(ideas);
       res.send(req.user.ideas);
     } catch (e) {
       res.status(500).send();
@@ -358,6 +355,81 @@ router.get("/countNovelty", async (req, res) => {
     NotNovel: res2,
     NovelAnswers: novelArr("Idea 10", ideas),
     NotNovelAnswers: antiNovelArr("Idea 10", ideas),
+  });
+  res1 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 11", classification: "Novel" } },
+  });
+
+  res2 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 11", classification: "Not Novel" } },
+  });
+
+  arr.push({
+    title: "Idea 11",
+    Novel: res1,
+    NotNovel: res2,
+    NovelAnswers: novelArr("Idea 11", ideas),
+    NotNovelAnswers: antiNovelArr("Idea 11", ideas),
+  });
+  res1 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 12", classification: "Novel" } },
+  });
+
+  res2 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 12", classification: "Not Novel" } },
+  });
+
+  arr.push({
+    title: "Idea 12",
+    Novel: res1,
+    NotNovel: res2,
+    NovelAnswers: novelArr("Idea 12", ideas),
+    NotNovelAnswers: antiNovelArr("Idea 12", ideas),
+  });
+  res1 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 13", classification: "Novel" } },
+  });
+
+  res2 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 13", classification: "Not Novel" } },
+  });
+
+  arr.push({
+    title: "Idea 13",
+    Novel: res1,
+    NotNovel: res2,
+    NovelAnswers: novelArr("Idea 13", ideas),
+    NotNovelAnswers: antiNovelArr("Idea 13", ideas),
+  });
+  res1 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 14", classification: "Novel" } },
+  });
+
+  res2 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 14", classification: "Not Novel" } },
+  });
+
+  arr.push({
+    title: "Idea 14",
+    Novel: res1,
+    NotNovel: res2,
+    NovelAnswers: novelArr("Idea 14", ideas),
+    NotNovelAnswers: antiNovelArr("Idea 14", ideas),
+  });
+  res1 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 15", classification: "Novel" } },
+  });
+
+  res2 = await User.count({
+    ideas: { $elemMatch: { title: "Idea 15", classification: "Not Novel" } },
+  });
+
+  arr.push({
+    title: "Idea 15",
+    Novel: res1,
+    NotNovel: res2,
+    NovelAnswers: novelArr("Idea 15", ideas),
+    NotNovelAnswers: antiNovelArr("Idea 15", ideas),
   });
   const total = await User.count({});
 

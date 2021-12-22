@@ -2,7 +2,6 @@
   <div>
     <filter-layout></filter-layout>
     <file-reader @load="loadIdeas" class="import_button" title="Load Ideas">
-      <!-- <router-link to="/evaluation"></router-link> -->
     </file-reader>
   </div>
 </template>

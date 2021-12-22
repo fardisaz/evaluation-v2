@@ -23,23 +23,12 @@ export default {
   components: { Download, DraggableItems, FilterLayout },
   computed: { ...mapGetters(["ideas", "saved"]) },
   data() {
-    return {
-      input: [
-        "The device to help iphone.",
-        "This flower is good for sickness.",
-        "This machine works like robot.",
-        "This sofa is good for lying on it.",
-        "This is a long journey for both of us.",
-        "I love the moon.",
-        "The clubs are opened tonight.",
-      ],
-    };
+    return {};
   },
   methods: {
     ...mapActions(["fetchIdeas", "compareIdeas"]),
 
     async extractKey(input) {
-      // while (true) {
       try {
         let item = {
           data: [input],
@@ -75,15 +64,6 @@ export default {
     async onStart() {
       for (let s of this.input) {
         await this.extractKey(s);
-
-        // if (index > 4) {
-        //   setTimeout(() => {
-        //     this.extractKey(s);
-        //   }, 1000);
-        // } else if (index < 4) {
-        //   this.extractKey(s);
-        // }
-        // index++;
       }
     },
   },
@@ -93,12 +73,6 @@ export default {
       .catch((err) => {
         console.log(err);
       });
-
-    // let input =
-    //   "Learn a new Language which helps people to communicate with one another and travel to different countries";
-
-    // this.onStart();
-    // let index = 0;
   },
 };
 </script>
