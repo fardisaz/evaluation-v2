@@ -5,9 +5,6 @@
       @mousedown="dragMouseDown"
       @dblclick="$emit('openDialog', title, description)"
     >
-      <!-- <p>
-        {{ extractedTopic }}
-      </p> -->
       <div class="myImage">
         <img
           :src="picture"
@@ -77,6 +74,7 @@ export default {
     },
     closeDragElement() {
       //sending the position of dropped element to the parent
+
       this.$emit(
         "posCalc",
         this.positions.clientX,

@@ -68,7 +68,7 @@
           :left="idea.position.left"
           :top="idea.position.top"
           @openDialog="toggleClick"
-          @posCalc="positionCalculation"
+          @posCalc="newpositionCalculation"
         >
         </new-draggable>
       </div>
@@ -157,7 +157,40 @@ export default {
       "updateNewIdea",
     ]),
     ...mapMutations(["UPDATE_SAVED", "SET_NEW_IDEAS"]),
-
+    newpositionCalculation(x, y, id) {
+      console.log("here is the new ideas position calculation: ");
+      const index = this.importedIdea.findIndex((idea) => idea._id === id);
+      let classification;
+      if (104 < y && y < 335 && 42 < x && x < 450) {
+        classification = "Novel";
+      } else if (595 < y && y < 800 && 994 < x && x < 1410) {
+        classification = "Not Novel";
+      } else {
+        classification = "";
+      }
+      this.importedIdea[index] = {
+        ...this.importedIdea[index],
+        position: {
+          left: x,
+          top: y,
+        },
+        classification,
+      };
+      this.updateNewIdea(this.importedIdea[index])
+        .then(() => {
+          this.fetchIdeas()
+            .then(() => {})
+            .catch((err) => {
+              console.log(
+                "Error in updating and fetching changed new ideas: ",
+                err
+              );
+            });
+        })
+        .catch((err) => {
+          console.log("Error has happened regarding updation new ideas: ", err);
+        });
+    },
     randomIntFromInterval(min, max) {
       // min and max included
       return Math.floor(Math.random() * (max - min + 1) + min);
@@ -590,27 +623,11 @@ export default {
                 .filter((p) => p != undefined)
                 .find((s) => s.newIdea == load.title).oldIdea
           );
-
-          if (
-            this.importedIdea.find(
-              (i) => JSON.stringify(i.position) === JSON.stringify(old.position)
-            )
-          ) {
-            this.importedIdea.push({
-              ...load,
-              classification: old.classification,
-              position: {
-                left: old.position.left + 40,
-                top: old.position.top + 40,
-              },
-            });
-          } else {
-            this.importedIdea.push({
-              ...load,
-              classification: old.classification,
-              position: old.position,
-            });
-          }
+          this.importedIdea.push({
+            ...load,
+            classification: old.classification,
+            position: old.position,
+          });
         } else {
           this.importedIdea.push({
             ...load,
